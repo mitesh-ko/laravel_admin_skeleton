@@ -12,5 +12,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
 require __DIR__.'/settings.php';
 
 Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('api/users/search', [UserController::class, 'search'])->name('users.search');
     Route::resource('users', UserController::class);
 });
