@@ -25,6 +25,7 @@ import type {
     ColumnDef,
     SortingState,
     PaginationState,
+    VisibilityState,
     Header,
     Cell,
 } from '@tanstack/react-table';
@@ -42,6 +43,10 @@ import {
     ArrowLeftFromLineIcon,
     ArrowRightFromLineIcon,
     GripVerticalIcon,
+    Columns3Icon,
+    SearchIcon,
+    RefreshCcwIcon,
+    ChevronDownIcon,
 } from 'lucide-react';
 import React, {
     forwardRef,
@@ -59,8 +64,10 @@ import {
 } from '@/components/ui/card';
 import {
     DropdownMenu,
+    DropdownMenuCheckboxItem,
     DropdownMenuContent,
     DropdownMenuItem,
+    DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
@@ -91,6 +98,7 @@ interface AdvancedTableProps {
     searchPlaceholder?: string;
     pinnedColumns?: { left?: string[]; right?: string[] };
     enableColumnOrdering?: boolean;
+    enableColumnVisibility?: boolean;
     showSrNo?: boolean;
 }
 
@@ -316,6 +324,7 @@ const AdvancedTable = forwardRef(function AdvancedTable(
         searchPlaceholder = 'Search...',
         pinnedColumns,
         enableColumnOrdering = false,
+        enableColumnVisibility = false,
         showSrNo = true,
     }: AdvancedTableProps,
     ref,
@@ -334,8 +343,12 @@ const AdvancedTable = forwardRef(function AdvancedTable(
     });
     const [globalFilter, setGlobalFilter] = useState('');
     const [searchValue, setSearchValue] = useState('');
+    const [columnSearch, setColumnSearch] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [density, setDensity] = useState<string | null>(null);
+    const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
+        {},
+    );
 
     const finalColumns = React.useMemo(() => {
         if (!showSrNo) {
@@ -460,6 +473,7 @@ const AdvancedTable = forwardRef(function AdvancedTable(
             pagination,
             globalFilter,
             columnOrder,
+            columnVisibility,
         },
         initialState: {
             columnPinning: pinnedColumns,
@@ -468,6 +482,7 @@ const AdvancedTable = forwardRef(function AdvancedTable(
         onPaginationChange: setPagination,
         onGlobalFilterChange: setGlobalFilter,
         onColumnOrderChange: setColumnOrder,
+        onColumnVisibilityChange: setColumnVisibility,
         getCoreRowModel: getCoreRowModel(),
         manualPagination: true,
         manualSorting: true,
@@ -505,50 +520,146 @@ const AdvancedTable = forwardRef(function AdvancedTable(
                         className="w-full sm:max-w-sm"
                     />
 
-                    <Select
-                        value={density || undefined}
-                        onValueChange={(value) =>
-                            setDensity(value as string | null)
-                        }
-                    >
-                        <SelectTrigger
-                            className="w-full sm:max-w-[150px]"
-                            aria-label="Density select"
-                        >
-                            <SelectValue placeholder="Density">
-                                {(() => {
-                                    const item = densityItems.find(
-                                        (i) => i.value === density,
-                                    );
-
-                                    return density ? (
-                                        <span className="flex items-center gap-2">
-                                            {item?.icon}
-                                            {item?.label}
-                                        </span>
-                                    ) : (
-                                        'Density'
-                                    );
-                                })()}
-                            </SelectValue>
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectGroup>
-                                <SelectLabel>Density</SelectLabel>
-                                {densityItems.slice(1).map((item) => (
-                                    <SelectItem
-                                        key={item.value as string}
-                                        value={item.value as string}
+                    <div className="flex items-center gap-2">
+                        {enableColumnVisibility && (
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <Button
+                                        variant="outline"
+                                        className="justify-between sm:w-[150px]"
                                     >
-                                        <div className="flex items-center gap-2">
-                                            {item.icon}
-                                            {item.label}
-                                        </div>
-                                    </SelectItem>
-                                ))}
-                            </SelectGroup>
-                        </SelectContent>
-                    </Select>
+                                        <span className="flex items-center gap-2">
+                                            <Columns3Icon className="size-4" />
+                                            Columns
+                                        </span>
+                                        <ChevronDownIcon className="size-4 opacity-50" />
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent
+                                    align="end"
+                                    className="w-[200px]"
+                                >
+                                    <div className="relative p-2">
+                                        <Input
+                                            value={columnSearch}
+                                            onChange={(e) =>
+                                                setColumnSearch(e.target.value)
+                                            }
+                                            className="h-8 pl-8"
+                                            placeholder="Search columns..."
+                                            onKeyDown={(e) =>
+                                                e.stopPropagation()
+                                            }
+                                        />
+                                        <SearchIcon className="absolute top-4 left-4 size-4 text-muted-foreground" />
+                                    </div>
+                                    <DropdownMenuSeparator />
+                                    <div className="max-h-[300px] overflow-y-auto">
+                                        {table
+                                            .getAllColumns()
+                                            .filter((column) =>
+                                                column.getCanHide(),
+                                            )
+                                            .map((column) => {
+                                                const title =
+                                                    typeof column.columnDef
+                                                        .header === 'string'
+                                                        ? column.columnDef
+                                                              .header
+                                                        : column.id;
+
+                                                if (
+                                                    columnSearch &&
+                                                    !title
+                                                        .toLowerCase()
+                                                        .includes(
+                                                            columnSearch.toLowerCase(),
+                                                        )
+                                                ) {
+                                                    return null;
+                                                }
+
+                                                return (
+                                                    <DropdownMenuCheckboxItem
+                                                        key={column.id}
+                                                        className="capitalize"
+                                                        checked={column.getIsVisible()}
+                                                        onCheckedChange={(
+                                                            value,
+                                                        ) =>
+                                                            column.toggleVisibility(
+                                                                !!value,
+                                                            )
+                                                        }
+                                                        onSelect={(e) =>
+                                                            e.preventDefault()
+                                                        }
+                                                    >
+                                                        {title}
+                                                    </DropdownMenuCheckboxItem>
+                                                );
+                                            })}
+                                    </div>
+                                    <DropdownMenuSeparator />
+                                    <DropdownMenuItem
+                                        onClick={() => {
+                                            table.resetColumnVisibility();
+                                            setColumnSearch('');
+                                        }}
+                                        className="justify-center text-muted-foreground"
+                                    >
+                                        <RefreshCcwIcon className="mr-2 size-4" />
+                                        Reset
+                                    </DropdownMenuItem>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+                        )}
+
+                        <Select
+                            value={density || undefined}
+                            onValueChange={(value) =>
+                                setDensity(value as string | null)
+                            }
+                        >
+                            <SelectTrigger
+                                className="w-full sm:max-w-[150px]"
+                                aria-label="Density select"
+                            >
+                                <SelectValue placeholder="Density">
+                                    {(() => {
+                                        const item = densityItems.find(
+                                            (i) => i.value === density,
+                                        );
+
+                                        return density ? (
+                                            <span className="flex items-center gap-2">
+                                                {item?.icon}
+                                                {item?.label}
+                                            </span>
+                                        ) : (
+                                            'Density'
+                                        );
+                                    })()}
+                                </SelectValue>
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectGroup>
+                                    <SelectLabel>Density</SelectLabel>
+                                    {densityItems.slice(1).map((item) => (
+                                        <SelectItem
+                                            key={item.value as string}
+                                            value={item.value as string}
+                                        >
+                                            <div className="flex items-center gap-2">
+                                                {item.icon}
+                                                {item.label}
+                                            </div>
+                                        </SelectItem>
+                                    ))}
+                                </SelectGroup>
+                            </SelectContent>
+                        </Select>
+                    </div>
                 </div>
             </CardHeader>
 

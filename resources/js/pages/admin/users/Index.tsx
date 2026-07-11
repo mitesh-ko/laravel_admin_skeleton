@@ -133,6 +133,7 @@ export default function Index({ flash }: IndexProps) {
                         dataUrl={admin.users.search.url()}
                         pinnedColumns={{}}
                         enableColumnOrdering={true}
+                        enableColumnVisibility={true}
                     />
                 </div>
             </div>
