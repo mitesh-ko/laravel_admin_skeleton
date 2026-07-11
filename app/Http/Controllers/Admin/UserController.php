@@ -11,7 +11,10 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\UserStoreRequest;
 use App\Http\Requests\Admin\UserUpdateRequest;
 use App\Models\User;
+use App\Utils\TableUtility;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 use Spatie\Permission\Models\Role;
@@ -23,11 +26,34 @@ class UserController extends Controller
      */
     public function index(): Response
     {
-        $users = User::with('roles')->latest()->paginate(10);
+        return Inertia::render('admin/users/Index');
+    }
 
-        return Inertia::render('admin/users/Index', [
-            'users' => $users,
-        ]);
+    /**
+     * API endpoint for fetching users data for AdvancedTable.
+     */
+    public function search(Request $request): JsonResponse
+    {
+        $usersQuery = User::with('roles');
+
+        // Handle Global Search (globalFilter)
+        $globalFilter = $request->input('globalFilter');
+        if (! empty($globalFilter)) {
+            $usersQuery->where(function ($q) use ($globalFilter) {
+                $q->where('name', 'like', "%{$globalFilter}%")
+                    ->orWhere('email', 'like', "%{$globalFilter}%");
+            });
+        }
+
+        $tableUtility = new TableUtility($usersQuery);
+        $tableUtility->applyFilters($request);
+        $tableUtility->sort($request);
+        $data = $tableUtility->paginate($request);
+
+        // Optional mapping could go here if we needed to mutate user data
+        // $processedData = $data->map(function ($user) { return $user; });
+
+        return $tableUtility->dataTableResponse($request);
     }
 
     /**

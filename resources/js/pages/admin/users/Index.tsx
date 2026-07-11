@@ -1,34 +1,113 @@
 import { Head, Link, useForm } from '@inertiajs/react';
+import type { ColumnDef } from '@tanstack/react-table';
+import { Pen, TrashIcon } from 'lucide-react';
+import React from 'react';
+import AdvancedTable from '@/components/advanced-table';
+import { ConfirmDialog } from '@/components/confirm-dialog';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import AppLayout from '@/layouts/app-layout';
 import admin from '@/routes/admin';
 
 interface User {
-    id: number;
+    id: string;
     name: string;
     email: string;
     roles?: { name: string }[];
 }
 
 interface IndexProps {
-    users: {
-        data: User[];
-        links: any[];
-    };
     flash?: {
         success?: string;
     };
 }
 
-export default function Index({ users, flash }: IndexProps) {
+export default function Index({ flash }: IndexProps) {
     const { delete: destroy } = useForm();
+    const tableRef = React.useRef<{ fetchData: () => void }>(null);
 
-    const handleDelete = (id: number) => {
-        if (confirm('Are you sure you want to delete this user?')) {
-            destroy(admin.users.destroy.url(id));
-        }
+    const [userToDelete, setUserToDelete] = React.useState<string | null>(null);
+
+    const handleDelete = (id: string) => {
+        setUserToDelete(id);
     };
+
+    const confirmDelete = () => {
+        if (!userToDelete) {
+            return;
+        }
+
+        destroy(admin.users.destroy.url(userToDelete), {
+            preserveScroll: true,
+            preserveState: true,
+            onSuccess: () => {
+                setUserToDelete(null);
+                tableRef.current?.fetchData();
+            },
+        });
+    };
+
+    const columns = React.useMemo<ColumnDef<User>[]>(
+        () => [
+            {
+                accessorKey: 'name',
+                header: 'Name',
+            },
+            {
+                accessorKey: 'email',
+                header: 'Email',
+            },
+            {
+                accessorKey: 'roles',
+                header: 'Roles',
+                enableSorting: false,
+                cell: ({ row }) => {
+                    const userRoles = row.original.roles;
+
+                    return (
+                        <div className="flex flex-wrap gap-1">
+                            {userRoles?.map((role) => (
+                                <Badge key={role.name} variant="secondary">
+                                    {role.name}
+                                </Badge>
+                            ))}
+                            {(!userRoles || userRoles.length === 0) && (
+                                <span className="text-xs text-muted-foreground italic">
+                                    No roles
+                                </span>
+                            )}
+                        </div>
+                    );
+                },
+            },
+            {
+                id: 'actions',
+                header: () => <div className="text-right">Actions</div>,
+                enableSorting: false,
+                cell: ({ row }) => {
+                    const user = row.original;
+
+                    return (
+                        <div className="flex justify-end space-x-2 text-right">
+                            <Button variant="outline" size="sm" asChild>
+                                <Link href={admin.users.edit.url(user.id)}>
+                                    <Pen />
+                                </Link>
+                            </Button>
+                            <Button
+                                variant="destructive"
+                                size="sm"
+                                onClick={() => handleDelete(user.id)}
+                            >
+                                <TrashIcon />
+                            </Button>
+                        </div>
+                    );
+                },
+            },
+        ],
+        [],
+    );
 
     return (
         <>
@@ -47,74 +126,26 @@ export default function Index({ users, flash }: IndexProps) {
                     </div>
                 )}
 
-                <div className="rounded-md border">
-                    <table className="w-full text-left text-sm">
-                        <thead className="bg-muted/50 text-muted-foreground">
-                            <tr>
-                                <th className="px-4 py-3 font-medium">Name</th>
-                                <th className="px-4 py-3 font-medium">Email</th>
-                                <th className="px-4 py-3 font-medium">Roles</th>
-                                <th className="px-4 py-3 text-right font-medium">
-                                    Actions
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {users.data.map((user) => (
-                                <tr
-                                    key={user.id}
-                                    className="border-b transition-colors last:border-0 hover:bg-muted/50"
-                                >
-                                    <td className="px-4 py-3">{user.name}</td>
-                                    <td className="px-4 py-3">{user.email}</td>
-                                    <td className="px-4 py-3">
-                                        <div className="flex flex-wrap gap-1">
-                                            {user.roles?.map((role) => (
-                                                <Badge
-                                                    key={role.name}
-                                                    variant="secondary"
-                                                >
-                                                    {role.name}
-                                                </Badge>
-                                            ))}
-                                            {(!user.roles ||
-                                                user.roles.length === 0) && (
-                                                <span className="text-xs text-muted-foreground italic">
-                                                    No roles
-                                                </span>
-                                            )}
-                                        </div>
-                                    </td>
-                                    <td className="space-x-2 px-4 py-3 text-right">
-                                        <Button
-                                            variant="outline"
-                                            size="sm"
-                                            asChild
-                                        >
-                                            <Link
-                                                href={admin.users.edit.url(
-                                                    user.id,
-                                                )}
-                                            >
-                                                Edit
-                                            </Link>
-                                        </Button>
-                                        <Button
-                                            variant="destructive"
-                                            size="sm"
-                                            onClick={() =>
-                                                handleDelete(user.id)
-                                            }
-                                        >
-                                            Delete
-                                        </Button>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                <div className="mt-4">
+                    <AdvancedTable
+                        ref={tableRef}
+                        columnsDetails={columns}
+                        dataUrl={admin.users.search.url()}
+                        pinnedColumns={{}}
+                        enableColumnOrdering={true}
+                    />
                 </div>
             </div>
+
+            <ConfirmDialog
+                open={!!userToDelete}
+                onOpenChange={(open) => !open && setUserToDelete(null)}
+                title="Are you absolutely sure?"
+                description="This action cannot be undone. This will permanently delete the user's account and remove their data from our servers."
+                onConfirm={confirmDelete}
+                confirmText="Delete"
+                destructive
+            />
         </>
     );
 }
