@@ -1,14 +1,16 @@
 import { Head, Link, useForm } from '@inertiajs/react';
-import type { MRT_ColumnDef } from 'material-react-table';
+import type { ColumnDef } from '@tanstack/react-table';
+import { Pen, TrashIcon } from 'lucide-react';
 import React from 'react';
-import AdvancedTable from '@/components/ui/advanced-table';
+import AdvancedTable from '@/components/advanced-table';
+import { ConfirmDialog } from '@/components/confirm-dialog';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import AppLayout from '@/layouts/app-layout';
 import admin from '@/routes/admin';
 
 interface User {
-    id: number;
+    id: string;
     name: string;
     email: string;
     roles?: { name: string }[];
@@ -22,21 +24,30 @@ interface IndexProps {
 
 export default function Index({ flash }: IndexProps) {
     const { delete: destroy } = useForm();
+    const tableRef = React.useRef<{ fetchData: () => void }>(null);
 
-    const handleDelete = (id: number) => {
-        if (confirm('Are you sure you want to delete this user?')) {
-            destroy(admin.users.destroy.url(id), {
-                preserveScroll: true,
-                preserveState: true,
-                onSuccess: () => {
-                    // Ideally, we'd trigger a table refresh here via a ref
-                    window.location.reload();
-                },
-            });
-        }
+    const [userToDelete, setUserToDelete] = React.useState<string | null>(null);
+
+    const handleDelete = (id: string) => {
+        setUserToDelete(id);
     };
 
-    const columns = React.useMemo<MRT_ColumnDef<User>[]>(
+    const confirmDelete = () => {
+        if (!userToDelete) {
+            return;
+        }
+
+        destroy(admin.users.destroy.url(userToDelete), {
+            preserveScroll: true,
+            preserveState: true,
+            onSuccess: () => {
+                setUserToDelete(null);
+                tableRef.current?.fetchData();
+            },
+        });
+    };
+
+    const columns = React.useMemo<ColumnDef<User>[]>(
         () => [
             {
                 accessorKey: 'name',
@@ -50,7 +61,7 @@ export default function Index({ flash }: IndexProps) {
                 accessorKey: 'roles',
                 header: 'Roles',
                 enableSorting: false,
-                Cell: ({ row }) => {
+                cell: ({ row }) => {
                     const userRoles = row.original.roles;
 
                     return (
@@ -71,23 +82,16 @@ export default function Index({ flash }: IndexProps) {
             },
             {
                 id: 'actions',
-                header: 'Actions',
+                header: () => <div className="text-right">Actions</div>,
                 enableSorting: false,
-                enableColumnActions: false,
-                muiTableBodyCellProps: {
-                    align: 'right',
-                },
-                muiTableHeadCellProps: {
-                    align: 'right',
-                },
-                Cell: ({ row }) => {
+                cell: ({ row }) => {
                     const user = row.original;
 
                     return (
                         <div className="flex justify-end space-x-2 text-right">
                             <Button variant="outline" size="sm" asChild>
                                 <Link href={admin.users.edit.url(user.id)}>
-                                    Edit
+                                    <Pen />
                                 </Link>
                             </Button>
                             <Button
@@ -95,7 +99,7 @@ export default function Index({ flash }: IndexProps) {
                                 size="sm"
                                 onClick={() => handleDelete(user.id)}
                             >
-                                Delete
+                                <TrashIcon />
                             </Button>
                         </div>
                     );
@@ -122,20 +126,26 @@ export default function Index({ flash }: IndexProps) {
                     </div>
                 )}
 
-                <div className="overflow-hidden rounded-md border shadow-sm">
+                <div className="mt-4">
                     <AdvancedTable
+                        ref={tableRef}
                         columnsDetails={columns}
-                        apiUrl={admin.users.search.url()}
-                        tableOptions={
-                            {
-                                // initialState: {
-                                //     showGlobalFilter: true,
-                                // }
-                            }
-                        }
+                        dataUrl={admin.users.search.url()}
+                        pinnedColumns={{}}
+                        enableColumnOrdering={true}
                     />
                 </div>
             </div>
+
+            <ConfirmDialog
+                open={!!userToDelete}
+                onOpenChange={(open) => !open && setUserToDelete(null)}
+                title="Are you absolutely sure?"
+                description="This action cannot be undone. This will permanently delete the user's account and remove their data from our servers."
+                onConfirm={confirmDelete}
+                confirmText="Delete"
+                destructive
+            />
         </>
     );
 }

@@ -37,13 +37,13 @@ class UserController extends Controller
         $usersQuery = User::with('roles');
 
         // Handle Global Search (globalFilter)
-        // $globalFilter = $request->input('globalFilter');
-        // if (!empty($globalFilter)) {
-        //     $usersQuery->where(function ($q) use ($globalFilter) {
-        //         $q->where('name', 'like', "%{$globalFilter}%")
-        //           ->orWhere('email', 'like', "%{$globalFilter}%");
-        //     });
-        // }
+        $globalFilter = $request->input('globalFilter');
+        if (! empty($globalFilter)) {
+            $usersQuery->where(function ($q) use ($globalFilter) {
+                $q->where('name', 'like', "%{$globalFilter}%")
+                    ->orWhere('email', 'like', "%{$globalFilter}%");
+            });
+        }
 
         $tableUtility = new TableUtility($usersQuery);
         $tableUtility->applyFilters($request);
