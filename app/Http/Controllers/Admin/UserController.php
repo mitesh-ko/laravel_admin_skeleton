@@ -7,9 +7,9 @@ namespace App\Http\Controllers\Admin;
 use App\Actions\User\CreateUserAction;
 use App\Actions\User\DeleteUserAction;
 use App\Actions\User\UpdateUserAction;
+use App\DTOs\GlobalSearchDTO;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Admin\UserStoreRequest;
-use App\Http\Requests\Admin\UserUpdateRequest;
+use App\Http\Requests\Admin\UserStoreUpdateRequest;
 use App\Models\User;
 use App\Utils\TableUtility;
 use Illuminate\Http\JsonResponse;
@@ -34,24 +34,13 @@ class UserController extends Controller
      */
     public function search(Request $request): JsonResponse
     {
-        $usersQuery = User::with('roles');
-
-        // Handle Global Search (globalFilter)
-        $globalFilter = $request->input('globalFilter');
-        if (! empty($globalFilter)) {
-            $usersQuery->where(function ($q) use ($globalFilter) {
-                $q->where('name', 'like', "%{$globalFilter}%")
-                    ->orWhere('email', 'like', "%{$globalFilter}%");
-            });
-        }
+        $usersQuery = User::select(['id', 'name', 'email'])->with('roles');
 
         $tableUtility = new TableUtility($usersQuery);
+        $tableUtility->applyGlobalSearch($request, new GlobalSearchDTO(User::GLOBAL_SEARCH));
         $tableUtility->applyFilters($request);
         $tableUtility->sort($request);
         $data = $tableUtility->paginate($request);
-
-        // Optional mapping could go here if we needed to mutate user data
-        // $processedData = $data->map(function ($user) { return $user; });
 
         return $tableUtility->dataTableResponse($request);
     }
@@ -69,7 +58,7 @@ class UserController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(UserStoreRequest $request, CreateUserAction $action): RedirectResponse
+    public function store(UserStoreUpdateRequest $request, CreateUserAction $action): RedirectResponse
     {
         $action->execute($request->toDTO());
 
@@ -92,7 +81,7 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UserUpdateRequest $request, User $user, UpdateUserAction $action): RedirectResponse
+    public function update(UserStoreUpdateRequest $request, User $user, UpdateUserAction $action): RedirectResponse
     {
         $action->execute($user, $request->toDTO());
 

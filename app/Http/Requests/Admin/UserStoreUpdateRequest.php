@@ -4,18 +4,19 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\Admin;
 
-use App\DTOs\UserData;
+use App\DTOs\UserDTO;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
-class UserStoreRequest extends FormRequest
+class UserStoreUpdateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return true; // Authorized via middleware
+        return true;
     }
 
     /**
@@ -27,14 +28,20 @@ class UserStoreRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
+            'email' => [
+                'required',
+                'string',
+                'email',
+                'max:255',
+                Rule::unique('users', 'email')->ignore($this->route('user')),
+            ],
             'roles' => ['nullable', 'array'],
             'roles.*' => ['string', 'exists:roles,name'],
         ];
     }
 
-    public function toDTO(): UserData
+    public function toDTO(): UserDTO
     {
-        return UserData::fromArray($this->validated());
+        return UserDTO::fromArray($this->validated());
     }
 }

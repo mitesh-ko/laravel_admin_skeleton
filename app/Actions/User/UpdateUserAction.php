@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Actions\User;
 
-use App\DTOs\UserData;
+use App\DTOs\UserDTO;
 use App\Models\User;
 
 class UpdateUserAction
 {
-    public function execute(User $user, UserData $data): User
+    public function execute(User $user, UserDTO $data): User
     {
         $user->update([
             'name' => $data->name,

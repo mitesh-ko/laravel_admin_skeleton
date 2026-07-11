@@ -405,7 +405,7 @@ const AdvancedTable = forwardRef(function AdvancedTable(
         setIsLoading(true);
 
         const params: Record<string, any> = {
-            globalFilter: globalFilter,
+            global_filter: globalFilter,
             'pagination[pageIndex]': pagination.pageIndex,
             'pagination[pageSize]': pagination.pageSize,
             ...extraPayload,

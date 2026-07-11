@@ -36,6 +36,19 @@ class User extends Authenticatable implements PasskeyUser
     /** @use HasFactory<UserFactory> */
     use HasFactory, HasRoles, HasUlids, Notifiable, PasskeyAuthenticatable, TwoFactorAuthenticatable;
 
+    public const GLOBAL_SEARCH = [
+        [
+            'key' => 'name',
+            'op' => 'like',
+            'mask' => '%{value}%',
+        ],
+        [
+            'key' => 'email',
+            'op' => 'like',
+            'mask' => '%{value}%',
+        ],
+    ];
+
     /**
      * Get the attributes that should be cast.
      *

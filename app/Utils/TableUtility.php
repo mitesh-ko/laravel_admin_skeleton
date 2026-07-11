@@ -2,6 +2,7 @@
 
 namespace App\Utils;
 
+use App\DTOs\GlobalSearchDTO;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -83,6 +84,55 @@ class TableUtility
                 // Continue processing remaining filters.
             }
         }
+    }
+
+    /**
+     * Applies global search across multiple columns based on configuration.
+     */
+    public function applyGlobalSearch(Request $request, GlobalSearchDTO $globalSearchDTO): void
+    {
+        $globalFilter = $request->input('global_filter');
+        if (empty($globalFilter) || empty($globalSearchDTO->fields)) {
+            return;
+        }
+
+        $this->query->where(function ($q) use ($globalFilter, $globalSearchDTO) {
+            $isFirst = true;
+            foreach ($globalSearchDTO->fields as $config) {
+                $key = $config['key'];
+                $op = $config['op'];
+                $mask = $config['mask'];
+
+                if (! $key) {
+                    continue;
+                }
+
+                $value = str_replace('{value}', $globalFilter, $mask);
+                $lastDotPosition = strrpos($key, '.');
+
+                if ($lastDotPosition === false) {
+                    if ($isFirst) {
+                        $q->where($key, $op, $value);
+                    } else {
+                        $q->orWhere($key, $op, $value);
+                    }
+                } else {
+                    $table = substr($key, 0, $lastDotPosition);
+                    $field = substr($key, $lastDotPosition + 1);
+
+                    if ($isFirst) {
+                        $q->whereHas($table, function ($subQ) use ($field, $op, $value) {
+                            $subQ->where($field, $op, $value);
+                        });
+                    } else {
+                        $q->orWhereHas($table, function ($subQ) use ($field, $op, $value) {
+                            $subQ->where($field, $op, $value);
+                        });
+                    }
+                }
+                $isFirst = false;
+            }
+        });
     }
 
     /**
