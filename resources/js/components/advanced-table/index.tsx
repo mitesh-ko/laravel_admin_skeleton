@@ -159,8 +159,9 @@ const DraggableTableHeader = ({
             ref={setNodeRef}
             style={style}
             className={cn(
+                'border-r border-border last:border-r-0',
                 header.column.getIsPinned()
-                    ? 'sticky bg-background shadow-[inset_-1px_0_0_rgba(0,0,0,0.1)] dark:shadow-[inset_-1px_0_0_rgba(255,255,255,0.1)]'
+                    ? 'sticky bg-muted shadow-[inset_-1px_0_0_rgba(0,0,0,0.1)] dark:shadow-[inset_-1px_0_0_rgba(255,255,255,0.1)]'
                     : '',
             )}
         >
@@ -563,15 +564,15 @@ const AdvancedTable = forwardRef(function AdvancedTable(
                         <Table
                             wrapperClassName="max-h-[65vh]"
                             className={cn({
-                                '[&_td]:py-px [&_th]:py-px':
+                                '[&_td]:px-3 [&_td]:py-px [&_th]:px-3 [&_th]:py-px':
                                     density === 'compact',
-                                '[&_td]:py-1 [&_th]:py-1':
+                                '[&_td]:px-4 [&_td]:py-1 [&_th]:px-4 [&_th]:py-1':
                                     density === 'standard',
-                                '[&_td]:py-2 [&_th]:py-2':
+                                '[&_td]:px-6 [&_td]:py-2 [&_th]:px-6 [&_th]:py-2':
                                     density === 'flexible',
                             })}
                         >
-                            <TableHeader className="sticky top-0 z-10 border-b bg-background shadow-sm">
+                            <TableHeader className="sticky top-0 z-10 border-b bg-muted shadow-sm">
                                 {table.getHeaderGroups().map((headerGroup) => (
                                     <TableRow
                                         key={headerGroup.id}
@@ -598,8 +599,15 @@ const AdvancedTable = forwardRef(function AdvancedTable(
                                     </TableRow>
                                 ))}
                             </TableHeader>
-                            <TableBody>
-                                {isLoading ? (
+                            <TableBody
+                                className={cn(
+                                    'transition-opacity duration-200',
+                                    isLoading &&
+                                        'pointer-events-none opacity-50',
+                                )}
+                            >
+                                {isLoading &&
+                                !table.getRowModel().rows?.length ? (
                                     <TableRow>
                                         <TableCell
                                             colSpan={finalColumns.length}
