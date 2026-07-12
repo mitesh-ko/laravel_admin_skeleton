@@ -26,7 +26,7 @@ class UserController extends Controller
      */
     public function index(): Response
     {
-        return Inertia::render('admin/users/Index');
+        return Inertia::render('admin/users/List');
     }
 
     /**
@@ -34,7 +34,7 @@ class UserController extends Controller
      */
     public function search(Request $request): JsonResponse
     {
-        $usersQuery = User::select(['id', 'name', 'email'])->with('roles');
+        $usersQuery = User::select(['id', 'name', 'email', 'created_at'])->with('roles');
 
         $tableUtility = new TableUtility($usersQuery);
         $tableUtility->applyGlobalSearch($request, new GlobalSearchDTO(User::GLOBAL_SEARCH));

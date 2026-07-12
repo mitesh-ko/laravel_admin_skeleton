@@ -12,15 +12,10 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { useFormatDate } from '@/hooks/use-format-date';
 import AppLayout from '@/layouts/app-layout';
 import admin from '@/routes/admin';
-
-interface User {
-    id: string;
-    name: string;
-    email: string;
-    roles?: { name: string }[];
-}
+import type { User } from '@/types/models/user';
 
 interface IndexProps {
     flash?: {
@@ -29,6 +24,7 @@ interface IndexProps {
 }
 
 export default function Index({ flash }: IndexProps) {
+    const formatDate = useFormatDate();
     const { delete: destroy } = useForm();
     const tableRef = React.useRef<{ fetchData: () => void }>(null);
 
@@ -62,6 +58,13 @@ export default function Index({ flash }: IndexProps) {
             {
                 accessorKey: 'email',
                 header: 'Email',
+            },
+            {
+                accessorKey: 'created_at',
+                header: 'Joined On',
+                cell: ({ row }) => {
+                    return formatDate(row.original.created_at);
+                },
             },
             {
                 accessorKey: 'roles',
@@ -130,7 +133,7 @@ export default function Index({ flash }: IndexProps) {
                 },
             },
         ],
-        [],
+        [formatDate],
     );
 
     return (

@@ -6,13 +6,7 @@ import { Label } from '@/components/ui/label';
 import MultiSelect from '@/components/ui/multi-select';
 import AppLayout from '@/layouts/app-layout';
 import admin from '@/routes/admin';
-
-interface User {
-    id: number;
-    name: string;
-    email: string;
-    roles?: { name: string }[];
-}
+import type { User } from '@/types/models/user';
 
 interface CreateEditProps {
     user?: User; // Optional, present in edit mode
@@ -135,7 +129,7 @@ export default function CreateEdit({ user, roles }: CreateEditProps) {
 }
 
 CreateEdit.layout = (page: any) => {
-    const isEdit = !!page.user;
+    const isEdit = !!page.props?.user;
 
     return (
         <AppLayout
@@ -151,7 +145,7 @@ CreateEdit.layout = (page: any) => {
                 {
                     title: isEdit ? 'Edit' : 'Create',
                     href: isEdit
-                        ? admin.users.edit.url(page.user.id)
+                        ? admin.users.edit.url(page.props.user.id)
                         : admin.users.create.url(),
                 },
             ]}

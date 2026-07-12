@@ -48,13 +48,19 @@ import {
     RefreshCcwIcon,
     ChevronDownIcon,
     XIcon,
+    ChevronsLeft,
+    ChevronLeft,
+    ChevronRight,
+    ChevronsRight,
 } from 'lucide-react';
 import React, {
     forwardRef,
+    useCallback,
     useEffect,
-    useImperativeHandle,
-    useState,
     useId,
+    useImperativeHandle,
+    useRef,
+    useState,
 } from 'react';
 import { Button } from '@/components/ui/button';
 import {
@@ -91,6 +97,17 @@ import {
 } from '@/components/ui/table';
 import { useDebounce } from '@/hooks/use-debounce';
 import { cn } from '@/lib/utils';
+
+interface TableDataResponse {
+    dataList: any[];
+    meta: {
+        totalRows: number;
+    };
+}
+
+function getColumnId(col: ColumnDef<any, any>): string {
+    return (col.id ?? (col as Record<string, any>).accessorKey ?? '') as string;
+}
 
 interface AdvancedTableProps {
     afterDataFetch?: (apiData: any) => void;
@@ -332,7 +349,8 @@ const AdvancedTable = forwardRef(function AdvancedTable(
     ref,
 ) {
     // 1. Data State
-    const [hasTableData, setHasTableData] = useState({
+    const dndContextId = useId();
+    const [tableData, setTableData] = useState<TableDataResponse>({
         dataList: [],
         meta: { totalRows: 0 },
     });
@@ -377,27 +395,23 @@ const AdvancedTable = forwardRef(function AdvancedTable(
 
     // Column Ordering State
     const [columnOrder, setColumnOrder] = useState<string[]>(
-        finalColumns.map((c) => (c.id || (c as any).accessorKey) as string),
+        finalColumns.map(getColumnId),
     );
 
     useEffect(() => {
-        setColumnOrder(
-            finalColumns.map((c) => (c.id || (c as any).accessorKey) as string),
-        );
+        setColumnOrder(finalColumns.map(getColumnId));
     }, [finalColumns]);
 
     // Debounce search input
     const debouncedSearchValue = useDebounce(searchValue);
 
     useEffect(() => {
-        if (globalFilter !== debouncedSearchValue) {
-            setGlobalFilter(debouncedSearchValue);
-            setPagination((prev) => ({ ...prev, pageIndex: 0 }));
-        }
-    }, [debouncedSearchValue, globalFilter]);
+        setGlobalFilter(debouncedSearchValue);
+        setPagination((prev) => ({ ...prev, pageIndex: 0 }));
+    }, [debouncedSearchValue]);
 
     // 3. Data Fetching
-    const fetchData = () => {
+    const fetchData = useCallback(() => {
         if (!dataUrl) {
             return;
         }
@@ -430,7 +444,7 @@ const AdvancedTable = forwardRef(function AdvancedTable(
                     );
                 }
 
-                setHasTableData({
+                setTableData({
                     dataList: response.data.dataList || [],
                     meta: response.data.meta || { totalRows: 0 },
                 });
@@ -448,26 +462,36 @@ const AdvancedTable = forwardRef(function AdvancedTable(
             .finally(() => {
                 setIsLoading(false);
             });
-    };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [
+        dataUrl,
+        globalFilter,
+        pagination.pageIndex,
+        pagination.pageSize,
+        sorting,
+    ]);
 
     useEffect(() => {
         fetchData();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [
-        sorting,
-        pagination.pageIndex,
-        pagination.pageSize,
-        globalFilter,
-        dataUrl,
-    ]);
+    }, [fetchData]);
 
-    useImperativeHandle(ref, () => ({ fetchData }));
+    // Use ref so useImperativeHandle always exposes the latest fetchData
+    const fetchDataRef = useRef(fetchData);
+    fetchDataRef.current = fetchData;
+
+    useImperativeHandle(
+        ref,
+        () => ({
+            fetchData: () => fetchDataRef.current(),
+        }),
+        [],
+    );
 
     // 4. TanStack Table Instance
     const table = useReactTable({
-        data: hasTableData.dataList,
+        data: tableData.dataList,
         columns: finalColumns,
-        pageCount: Math.ceil(hasTableData.meta.totalRows / pagination.pageSize),
+        pageCount: Math.ceil(tableData.meta.totalRows / pagination.pageSize),
         state: {
             sorting,
             pagination,
@@ -536,7 +560,13 @@ const AdvancedTable = forwardRef(function AdvancedTable(
 
                     <div className="flex items-center gap-2">
                         {enableColumnVisibility && (
-                            <DropdownMenu>
+                            <DropdownMenu
+                                onOpenChange={(open) => {
+                                    if (!open) {
+                                        setColumnSearch('');
+                                    }
+                                }}
+                            >
                                 <DropdownMenuTrigger asChild>
                                     <Button
                                         variant="outline"
@@ -680,7 +710,7 @@ const AdvancedTable = forwardRef(function AdvancedTable(
             <CardContent className="p-0">
                 <div className="relative border-y">
                     <DndContext
-                        id={useId()}
+                        id={dndContextId}
                         collisionDetection={closestCenter}
                         modifiers={[restrictToHorizontalAxis]}
                         onDragEnd={handleDragEnd}
@@ -793,14 +823,14 @@ const AdvancedTable = forwardRef(function AdvancedTable(
                         Showing{' '}
                         {table.getState().pagination.pageIndex *
                             table.getState().pagination.pageSize +
-                            (hasTableData.meta.totalRows > 0 ? 1 : 0)}{' '}
+                            (tableData.meta.totalRows > 0 ? 1 : 0)}{' '}
                         to{' '}
                         {Math.min(
                             (table.getState().pagination.pageIndex + 1) *
                                 table.getState().pagination.pageSize,
-                            hasTableData.meta.totalRows,
+                            tableData.meta.totalRows,
                         )}{' '}
-                        of {hasTableData.meta.totalRows} entries
+                        of {tableData.meta.totalRows} entries
                     </div>
                     <div className="flex w-full flex-col items-center gap-4 sm:w-auto sm:flex-row sm:gap-6 lg:gap-8">
                         <div className="flex w-full items-center justify-between space-x-2 sm:w-auto sm:justify-start">
@@ -840,7 +870,7 @@ const AdvancedTable = forwardRef(function AdvancedTable(
                                 <span className="sr-only">
                                     Go to first page
                                 </span>
-                                {'<<'}
+                                <ChevronsLeft className="size-4" />
                             </Button>
                             <Button
                                 variant="outline"
@@ -851,7 +881,7 @@ const AdvancedTable = forwardRef(function AdvancedTable(
                                 <span className="sr-only">
                                     Go to previous page
                                 </span>
-                                {'<'}
+                                <ChevronLeft className="size-4" />
                             </Button>
                             <Button
                                 variant="outline"
@@ -860,7 +890,7 @@ const AdvancedTable = forwardRef(function AdvancedTable(
                                 disabled={!table.getCanNextPage()}
                             >
                                 <span className="sr-only">Go to next page</span>
-                                {'>'}
+                                <ChevronRight className="size-4" />
                             </Button>
                             <Button
                                 variant="outline"
@@ -871,7 +901,7 @@ const AdvancedTable = forwardRef(function AdvancedTable(
                                 disabled={!table.getCanNextPage()}
                             >
                                 <span className="sr-only">Go to last page</span>
-                                {'>>'}
+                                <ChevronsRight className="size-4" />
                             </Button>
                         </div>
                     </div>
