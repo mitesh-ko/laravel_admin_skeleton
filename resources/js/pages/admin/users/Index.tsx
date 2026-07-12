@@ -1,11 +1,17 @@
 import { Head, Link, useForm } from '@inertiajs/react';
 import type { ColumnDef } from '@tanstack/react-table';
-import { Pen, TrashIcon } from 'lucide-react';
+import { MoreHorizontal, Pen, Trash2 } from 'lucide-react';
 import React from 'react';
 import AdvancedTable from '@/components/advanced-table';
 import { ConfirmDialog } from '@/components/confirm-dialog';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import AppLayout from '@/layouts/app-layout';
 import admin from '@/routes/admin';
 
@@ -95,12 +101,30 @@ export default function Index({ flash }: IndexProps) {
                                 </Link>
                             </Button>
                             <Button
-                                variant="destructive"
+                                variant="outline"
                                 size="sm"
                                 onClick={() => handleDelete(user.id)}
                             >
-                                <TrashIcon />
+                                <Trash2 className="text-destructive" />
                             </Button>
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <Button variant="outline" size="sm">
+                                        <MoreHorizontal className="h-4 w-4 text-muted-foreground" />
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end">
+                                    <DropdownMenuItem onClick={() => {}}>
+                                        Login
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem onClick={() => {}}>
+                                        Activity Logs
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem onClick={() => {}}>
+                                        Auth Logs
+                                    </DropdownMenuItem>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
                         </div>
                     );
                 },
@@ -142,7 +166,7 @@ export default function Index({ flash }: IndexProps) {
                 open={!!userToDelete}
                 onOpenChange={(open) => !open && setUserToDelete(null)}
                 title="Are you absolutely sure?"
-                description="This action cannot be undone. This will permanently delete the user's account and remove their data from our servers."
+                description="This action cannot be undone. This will permanently delete the user's account and remove their data from servers."
                 onConfirm={confirmDelete}
                 confirmText="Delete"
                 destructive

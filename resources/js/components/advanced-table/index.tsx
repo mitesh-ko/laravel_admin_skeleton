@@ -47,6 +47,7 @@ import {
     SearchIcon,
     RefreshCcwIcon,
     ChevronDownIcon,
+    XIcon,
 } from 'lucide-react';
 import React, {
     forwardRef,
@@ -88,6 +89,7 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
+import { useDebounce } from '@/hooks/use-debounce';
 import { cn } from '@/lib/utils';
 
 interface AdvancedTableProps {
@@ -385,16 +387,14 @@ const AdvancedTable = forwardRef(function AdvancedTable(
     }, [finalColumns]);
 
     // Debounce search input
-    useEffect(() => {
-        const handler = setTimeout(() => {
-            if (globalFilter !== searchValue) {
-                setGlobalFilter(searchValue);
-                setPagination((prev) => ({ ...prev, pageIndex: 0 }));
-            }
-        }, 300);
+    const debouncedSearchValue = useDebounce(searchValue);
 
-        return () => clearTimeout(handler);
-    }, [searchValue, globalFilter]);
+    useEffect(() => {
+        if (globalFilter !== debouncedSearchValue) {
+            setGlobalFilter(debouncedSearchValue);
+            setPagination((prev) => ({ ...prev, pageIndex: 0 }));
+        }
+    }, [debouncedSearchValue, globalFilter]);
 
     // 3. Data Fetching
     const fetchData = () => {
@@ -513,12 +513,26 @@ const AdvancedTable = forwardRef(function AdvancedTable(
         <Card className="w-full shadow-sm">
             <CardHeader className="pb-4">
                 <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
-                    <Input
-                        placeholder={searchPlaceholder}
-                        value={searchValue}
-                        onChange={(event) => setSearchValue(event.target.value)}
-                        className="w-full sm:max-w-sm"
-                    />
+                    <div className="relative w-full sm:max-w-sm">
+                        <Input
+                            placeholder={searchPlaceholder}
+                            value={searchValue}
+                            onChange={(event) =>
+                                setSearchValue(event.target.value)
+                            }
+                            className="w-full pr-8"
+                        />
+                        {searchValue && (
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                className="absolute top-0 right-0 h-full w-8 px-2 py-0 text-muted-foreground hover:bg-transparent hover:text-foreground"
+                                onClick={() => setSearchValue('')}
+                            >
+                                <XIcon className="size-4" />
+                            </Button>
+                        )}
+                    </div>
 
                     <div className="flex items-center gap-2">
                         {enableColumnVisibility && (
