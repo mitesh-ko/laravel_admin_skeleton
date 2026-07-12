@@ -62,7 +62,9 @@ class UserController extends Controller
     {
         $action->execute($request->toDTO());
 
-        return redirect()->route('admin.users.index')->with('success', 'User created successfully.');
+        Inertia::flash('toast', ['type' => 'success', 'message' => 'User created successfully.']);
+
+        return redirect()->route('admin.users.index');
     }
 
     /**
@@ -85,7 +87,9 @@ class UserController extends Controller
     {
         $action->execute($user, $request->toDTO());
 
-        return redirect()->route('admin.users.index')->with('success', 'User updated successfully.');
+        Inertia::flash('toast', ['type' => 'success', 'message' => 'User updated successfully.']);
+
+        return redirect()->route('admin.users.index');
     }
 
     /**
@@ -95,6 +99,8 @@ class UserController extends Controller
     {
         $action->execute($user);
 
-        return redirect()->route('admin.users.index')->with('success', 'User deleted successfully.');
+        Inertia::flash('toast', ['type' => 'success', 'message' => 'User deleted successfully.']);
+
+        return redirect()->route('admin.users.index');
     }
 }

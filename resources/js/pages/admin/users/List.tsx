@@ -17,13 +17,7 @@ import AppLayout from '@/layouts/app-layout';
 import admin from '@/routes/admin';
 import type { User } from '@/types/models/user';
 
-interface IndexProps {
-    flash?: {
-        success?: string;
-    };
-}
-
-export default function Index({ flash }: IndexProps) {
+export default function Index() {
     const formatDate = useFormatDate();
     const { delete: destroy } = useForm();
     const tableRef = React.useRef<{ fetchData: () => void }>(null);
@@ -146,12 +140,6 @@ export default function Index({ flash }: IndexProps) {
                         <Link href={admin.users.create.url()}>Create User</Link>
                     </Button>
                 </div>
-
-                {flash?.success && (
-                    <div className="mb-4 rounded bg-green-500/10 p-4 text-green-500">
-                        {flash.success}
-                    </div>
-                )}
 
                 <div className="mt-4">
                     <AdvancedTable
