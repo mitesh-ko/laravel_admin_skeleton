@@ -36,5 +36,6 @@ return [
     ],
 
     'admin_date' => 'dd MMM, yyyy',
-    'admin_date_time' => 'dd MMM, yyyy hh:mm A',
+    'admin_time' => 'HH:MM',
+    'admin_date_time' => 'dd MMM, yyyy HH:MM',
 ];

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\ActivityLogController;
 use App\Http\Controllers\Admin\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -14,4 +15,8 @@ require __DIR__.'/settings.php';
 Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('api/users/search', [UserController::class, 'search'])->name('users.search');
     Route::resource('users', UserController::class);
+
+    Route::get('api/activity-logs/search', [ActivityLogController::class, 'search'])->name('activity-logs.search');
+    Route::get('activity-logs', [ActivityLogController::class, 'index'])->name('activity-logs.index');
+    Route::get('activity-logs/{audit}', [ActivityLogController::class, 'show'])->name('activity-logs.show');
 });

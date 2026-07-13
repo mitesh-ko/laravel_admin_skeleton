@@ -8,7 +8,7 @@ import { useCallback } from 'react';
  *
  * @returns A function to format dates
  */
-export function useFormatDate() {
+export function useAppFormat() {
     const page = usePage();
 
     /**
@@ -20,7 +20,7 @@ export function useFormatDate() {
      *
      * @see https://date-fns.org/docs/format
      */
-    return useCallback(
+    const formatDate = useCallback(
         function formatDate(
             date: string | Date | null | undefined,
             format?: string,
@@ -51,4 +51,39 @@ export function useFormatDate() {
         },
         [page.props],
     );
+
+    const formatDateTime = useCallback(
+        function formatDateTime(
+            date: string | Date | null | undefined,
+            format?: string,
+        ): string {
+            if (!date) {
+                return '';
+            }
+
+            const d = typeof date === 'string' ? new Date(date) : date;
+
+            if (isNaN(d.getTime())) {
+                return '';
+            }
+
+            let finalFormat = format;
+
+            // If no format is provided, try to read the default from Inertia shared props
+            if (!finalFormat) {
+                try {
+                    const { dateFormats } = page.props;
+                    finalFormat =
+                        dateFormats?.datetime || 'dd MMM, yyyy hh:mm a';
+                } catch {
+                    finalFormat = 'dd MMM, yyyy hh:mm a';
+                }
+            }
+
+            return dateFnsFormat(date, finalFormat);
+        },
+        [page.props],
+    );
+
+    return { formatDate, formatDateTime };
 }

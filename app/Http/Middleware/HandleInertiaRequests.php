@@ -44,6 +44,7 @@ class HandleInertiaRequests extends Middleware
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
             'dateFormats' => [
                 'date' => config('services.admin_date'),
+                'time' => config('services.admin_time'),
                 'datetime' => config('services.admin_date_time'),
             ],
         ];

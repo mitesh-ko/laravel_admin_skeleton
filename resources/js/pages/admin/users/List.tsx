@@ -12,13 +12,13 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { useFormatDate } from '@/hooks/use-format-date';
+import { useAppFormat } from '@/hooks/use-app-format';
 import AppLayout from '@/layouts/app-layout';
 import admin from '@/routes/admin';
 import type { User } from '@/types/models/user';
 
 export default function Index() {
-    const formatDate = useFormatDate();
+    const { formatDate } = useAppFormat();
     const { delete: destroy } = useForm();
     const tableRef = React.useRef<{ fetchData: () => void }>(null);
 
@@ -85,7 +85,7 @@ export default function Index() {
             },
             {
                 id: 'actions',
-                header: () => <div className="text-right">Actions</div>,
+                header: 'Actions',
                 enableSorting: false,
                 cell: ({ row }) => {
                     const user = row.original;
