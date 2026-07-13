@@ -106,7 +106,11 @@ interface TableDataResponse {
 }
 
 function getColumnId(col: ColumnDef<any, any>): string {
-    return (col.id ?? (col as Record<string, any>).accessorKey ?? '') as string;
+    const id = (col.id ??
+        (col as Record<string, any>).accessorKey ??
+        '') as string;
+
+    return id.replace(/\./g, '_');
 }
 
 interface AdvancedTableProps {
