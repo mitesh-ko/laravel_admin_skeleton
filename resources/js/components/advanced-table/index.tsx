@@ -430,7 +430,14 @@ const AdvancedTable = forwardRef(function AdvancedTable(
         };
 
         if (sorting.length > 0) {
-            params['sorting[0][id]'] = sorting[0].id;
+            const sortId = sorting[0].id;
+            // Map TanStack's sanitized ID (user_name) back to original accessorKey (user.name) for the API
+            const columnDef = finalColumns.find(
+                (col) => getColumnId(col) === sortId,
+            ) as any;
+            const originalId = columnDef?.accessorKey || sortId;
+
+            params['sorting[0][id]'] = originalId;
             params['sorting[0][desc]'] = sorting[0].desc;
         }
 

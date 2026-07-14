@@ -42,6 +42,7 @@ export default function Index() {
             {
                 accessorKey: 'event',
                 header: 'Action',
+                enableSorting: false,
                 cell: ({ row }) => {
                     const event = row.original.event;
 
@@ -71,6 +72,7 @@ export default function Index() {
             },
             {
                 accessorKey: 'ip_address',
+                enableSorting: false,
                 header: 'IP Address',
             },
             {
