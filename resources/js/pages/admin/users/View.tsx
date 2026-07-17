@@ -4,9 +4,11 @@ import {
     Key,
     Shield,
     User as UserIcon,
+    Users,
     CheckCircle2,
 } from 'lucide-react';
 import React from 'react';
+import TextLink from '@/components/text-link';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -35,6 +37,7 @@ export default function View({ user }: ViewProps) {
     const { formatDate } = useAppFormat();
     const userRoleNames = user.roles?.map((r) => r.name) || [];
     const userPermissionNames = user.permissions?.map((p: any) => p.name) || [];
+    const userAssignedUsers = user.assigned_users || [];
 
     return (
         <>
@@ -106,6 +109,28 @@ export default function View({ user }: ViewProps) {
                                     {formatDate(user.created_at)}
                                 </p>
                             </div>
+                            <div>
+                                <h3 className="text-sm font-medium text-muted-foreground">
+                                    Managed By
+                                </h3>
+                                <p className="mt-1">
+                                    {user.assigned_to_user ? (
+                                        <TextLink
+                                            href={admin.users.show.url(
+                                                user.assigned_to_user.id,
+                                            )}
+                                            className="flex w-fit items-center gap-2"
+                                        >
+                                            <UserIcon className="h-4 w-4 text-muted-foreground" />
+                                            {user.assigned_to_user.name}
+                                        </TextLink>
+                                    ) : (
+                                        <span className="text-muted-foreground italic">
+                                            Unassigned
+                                        </span>
+                                    )}
+                                </p>
+                            </div>
                         </CardContent>
                     </Card>
 
@@ -167,6 +192,50 @@ export default function View({ user }: ViewProps) {
                                 ) : (
                                     <p className="text-sm text-muted-foreground italic">
                                         No direct permissions assigned.
+                                    </p>
+                                )}
+                            </CardContent>
+                        </Card>
+
+                        {/* Managed Users */}
+                        <Card>
+                            <CardHeader>
+                                <CardTitle className="flex items-center gap-2">
+                                    <Users className="h-5 w-5 text-muted-foreground" />
+                                    Managed Users
+                                </CardTitle>
+                                <CardDescription>
+                                    Users that are managed by this user.
+                                </CardDescription>
+                            </CardHeader>
+                            <CardContent>
+                                {userAssignedUsers.length > 0 ? (
+                                    <div className="flex max-h-64 flex-col gap-2 overflow-y-auto pr-2">
+                                        {userAssignedUsers.map(
+                                            (managedUser) => (
+                                                <div
+                                                    key={managedUser.id}
+                                                    className="flex items-center gap-2 rounded-md border p-2 text-sm"
+                                                >
+                                                    <UserIcon className="h-4 w-4 text-muted-foreground" />
+                                                    <TextLink
+                                                        href={admin.users.show.url(
+                                                            managedUser.id,
+                                                        )}
+                                                        className="font-medium"
+                                                    >
+                                                        {managedUser.name}
+                                                    </TextLink>
+                                                    <span className="text-muted-foreground">
+                                                        ({managedUser.email})
+                                                    </span>
+                                                </div>
+                                            ),
+                                        )}
+                                    </div>
+                                ) : (
+                                    <p className="text-sm text-muted-foreground italic">
+                                        No users managed by this user.
                                     </p>
                                 )}
                             </CardContent>

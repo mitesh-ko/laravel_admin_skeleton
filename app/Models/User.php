@@ -31,7 +31,7 @@ use Spatie\Permission\Traits\HasRoles;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
-#[Fillable(['name', 'email', 'password'])]
+#[Fillable(['name', 'email', 'password', 'created_by', 'assigned_to'])]
 #[Hidden(['password', 'two_factor_secret', 'two_factor_recovery_codes', 'remember_token'])]
 class User extends Authenticatable implements Auditable, PasskeyUser
 {
@@ -63,5 +63,37 @@ class User extends Authenticatable implements Auditable, PasskeyUser
             'password' => 'hashed',
             'two_factor_confirmed_at' => 'datetime',
         ];
+    }
+
+    /**
+     * Get the user that created this user.
+     */
+    public function creator()
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
+
+    /**
+     * Get the user this user is assigned to.
+     */
+    public function assignedToUser()
+    {
+        return $this->belongsTo(User::class, 'assigned_to');
+    }
+
+    /**
+     * Get users assigned to this user.
+     */
+    public function assignedUsers()
+    {
+        return $this->hasMany(User::class, 'assigned_to');
+    }
+
+    /**
+     * Get roles assigned to this user.
+     */
+    public function assignedRoles()
+    {
+        return $this->hasMany(Role::class, 'assigned_to');
     }
 }

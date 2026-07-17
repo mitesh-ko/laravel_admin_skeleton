@@ -12,23 +12,27 @@ interface CreateEditProps {
     user?: User; // Optional, present in edit mode
     roles: string[];
     permissions: string[];
+    users: { id: string; name: string }[];
 }
 
 export default function CreateEdit({
     user,
     roles,
     permissions,
+    users,
 }: CreateEditProps) {
     const isEdit = !!user;
     const userRoleNames = user?.roles?.map((r) => r.name) || [];
     const userPermissionNames =
         user?.permissions?.map((p: any) => p.name) || [];
+    const userAssignedUsers = user?.assigned_users?.map((u: any) => u.id) || [];
 
     const { data, setData, post, put, processing, errors } = useForm({
         name: user?.name || '',
         email: user?.email || '',
         roles: userRoleNames,
         permissions: userPermissionNames,
+        assigned_users: userAssignedUsers,
     });
 
     const submit = (e: React.FormEvent) => {
@@ -113,6 +117,44 @@ export default function CreateEdit({
                                 </p>
                             )}
                             <InputError message={errors.roles as string} />
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label>Managed Users</Label>
+                            <MultiSelect
+                                isMulti={true}
+                                name="assigned_users"
+                                options={users
+                                    .filter((u) => u.id !== user?.id)
+                                    .map((u) => ({
+                                        value: u.id,
+                                        label: u.name,
+                                    }))}
+                                value={data.assigned_users.map((id) => ({
+                                    value: id,
+                                    label:
+                                        users.find((u) => u.id === id)?.name ||
+                                        '',
+                                }))}
+                                onChange={(selected: any) =>
+                                    setData(
+                                        'assigned_users',
+                                        selected
+                                            ? (selected as any[]).map(
+                                                  (option) => option.value,
+                                              )
+                                            : [],
+                                    )
+                                }
+                                placeholder="Select managed users..."
+                                className="react-select-container"
+                                isClearable
+                            />
+                            <InputError
+                                message={
+                                    (errors as any).assigned_users as string
+                                }
+                            />
                         </div>
 
                         <div className="space-y-2">

@@ -29,6 +29,14 @@ class RoleController extends Controller
         Gate::authorize(PermissionName::MANAGE_ROLES->value);
         $query = Role::withCount('permissions');
 
+        if (! auth()->user()->can(PermissionName::MANAGE_ALL_ROLES->value)) {
+            if (auth()->user()->can(PermissionName::MANAGE_OWN_ROLES->value)) {
+                $query->where('created_by', auth()->id());
+            } else {
+                $query->where('id', null);
+            }
+        }
+
         return TableUtility::process($query, $request, [
             'filter',
             'sort',
@@ -62,6 +70,11 @@ class RoleController extends Controller
     public function edit(Role $role)
     {
         Gate::authorize(PermissionName::EDIT_ROLES->value);
+        if (! auth()->user()->can(PermissionName::MANAGE_ALL_ROLES->value)) {
+            if (! auth()->user()->can(PermissionName::MANAGE_OWN_ROLES->value) || $role->created_by !== auth()->id()) {
+                abort(403, 'Unauthorized action.');
+            }
+        }
         $permissions = Permission::orderBy('module')->orderBy('id')->get()->groupBy('module');
         $rolePermissions = $role->permissions->pluck('name')->toArray();
 
@@ -86,6 +99,11 @@ class RoleController extends Controller
     public function destroy(Role $role, DeleteRoleAction $action)
     {
         Gate::authorize(PermissionName::DELETE_ROLES->value);
+        if (! auth()->user()->can(PermissionName::MANAGE_ALL_ROLES->value)) {
+            if (! auth()->user()->can(PermissionName::MANAGE_OWN_ROLES->value) || $role->created_by !== auth()->id()) {
+                abort(403, 'Unauthorized action.');
+            }
+        }
         try {
             $action->execute($role);
 

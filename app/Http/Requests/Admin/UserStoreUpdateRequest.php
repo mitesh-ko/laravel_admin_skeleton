@@ -21,7 +21,21 @@ class UserStoreUpdateRequest extends FormRequest
             return $this->user()->can(PermissionName::CREATE_USERS->value);
         }
 
-        return $this->user()->can(PermissionName::EDIT_USERS->value);
+        if (! $this->user()->can(PermissionName::EDIT_USERS->value)) {
+            return false;
+        }
+
+        if ($this->user()->can(PermissionName::MANAGE_ALL_USERS->value)) {
+            return true;
+        }
+
+        if ($this->user()->can(PermissionName::MANAGE_OWN_USERS->value)) {
+            $userToEdit = $this->route('user');
+
+            return $userToEdit && $userToEdit->created_by === $this->user()->id;
+        }
+
+        return false;
     }
 
     /**
@@ -44,6 +58,8 @@ class UserStoreUpdateRequest extends FormRequest
             'roles.*' => ['string', 'exists:roles,name'],
             'permissions' => ['nullable', 'array'],
             'permissions.*' => ['string', 'exists:permissions,name'],
+            'assigned_users' => ['nullable', 'array'],
+            'assigned_users.*' => ['string', 'exists:users,id'],
         ];
     }
 

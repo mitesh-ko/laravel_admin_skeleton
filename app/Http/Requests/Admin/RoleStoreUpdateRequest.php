@@ -17,7 +17,21 @@ class RoleStoreUpdateRequest extends FormRequest
             return $this->user()->can(PermissionName::CREATE_ROLES->value);
         }
 
-        return $this->user()->can(PermissionName::EDIT_ROLES->value);
+        if (! $this->user()->can(PermissionName::EDIT_ROLES->value)) {
+            return false;
+        }
+
+        if ($this->user()->can(PermissionName::MANAGE_ALL_ROLES->value)) {
+            return true;
+        }
+
+        if ($this->user()->can(PermissionName::MANAGE_OWN_ROLES->value)) {
+            $roleToEdit = $this->route('role');
+
+            return $roleToEdit && $roleToEdit->created_by === $this->user()->id;
+        }
+
+        return false;
     }
 
     public function rules(): array

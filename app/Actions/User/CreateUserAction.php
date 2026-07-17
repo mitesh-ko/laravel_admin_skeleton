@@ -7,6 +7,7 @@ namespace App\Actions\User;
 use App\DTOs\UserDTO;
 use App\Mail\UserCreatedMail;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
@@ -21,7 +22,13 @@ class CreateUserAction
             'name' => $data->name,
             'email' => $data->email,
             'password' => Hash::make($password),
+            'created_by' => Auth::id(),
+            'assigned_to' => Auth::id(),
         ]);
+
+        if (! empty($data->assigned_users)) {
+            User::whereIn('id', $data->assigned_users)->update(['assigned_to' => $user->id]);
+        }
 
         if (! empty($data->roles)) {
             $user->assignRole($data->roles);

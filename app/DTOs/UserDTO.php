@@ -14,6 +14,7 @@ class UserDTO
         public readonly string $email,
         public readonly array $roles = [],
         public readonly array $permissions = [],
+        public readonly array $assigned_users = [],
     ) {}
 
     public static function fromArray(array $data): self
@@ -23,6 +24,7 @@ class UserDTO
             email: $data['email'],
             roles: $data['roles'] ?? [],
             permissions: $data['permissions'] ?? [],
+            assigned_users: $data['assigned_users'] ?? [],
         );
     }
 }

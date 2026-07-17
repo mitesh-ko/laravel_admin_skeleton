@@ -16,6 +16,13 @@ class UpdateUserAction
             'email' => $data->email,
         ]);
 
+        // Update assigned users (Top-Down)
+        User::where('assigned_to', $user->id)->update(['assigned_to' => null]);
+
+        if (! empty($data->assigned_users)) {
+            User::whereIn('id', $data->assigned_users)->update(['assigned_to' => $user->id]);
+        }
+
         $user->syncRoles($data->roles);
         $user->syncPermissions($data->permissions);
 

@@ -47,6 +47,15 @@ class UserController extends Controller
             })
             ->with('roles');
 
+        if (! auth()->user()->can(PermissionName::MANAGE_ALL_USERS->value)) {
+            if (auth()->user()->can(PermissionName::MANAGE_OWN_USERS->value)) {
+                $usersQuery->where('assigned_to', auth()->id());
+            } else {
+                // If they have neither, they shouldn't see anything. (Gate MANAGE_USERS allows access to the page, but we return 0 rows).
+                $usersQuery->where('id', null);
+            }
+        }
+
         return TableUtility::process($usersQuery, $request, [
             'globalSearch' => new GlobalSearchDTO(User::GLOBAL_SEARCH),
             'filter',
@@ -65,6 +74,7 @@ class UserController extends Controller
         return Inertia::render('admin/users/CreateEdit', [
             'roles' => Role::all()->pluck('name'),
             'permissions' => Permission::all()->pluck('name'),
+            'users' => User::select('id', 'name')->get(),
         ]);
     }
 
@@ -86,7 +96,12 @@ class UserController extends Controller
     public function show(User $user): Response
     {
         Gate::authorize(PermissionName::MANAGE_USERS->value);
-        $user->load(['roles', 'permissions']);
+        if (! auth()->user()->can(PermissionName::MANAGE_ALL_USERS->value)) {
+            if (! auth()->user()->can(PermissionName::MANAGE_OWN_USERS->value) || $user->assigned_to !== auth()->id()) {
+                abort(403, 'Unauthorized action.');
+            }
+        }
+        $user->load(['roles', 'permissions', 'assignedUsers', 'assignedToUser']);
 
         return Inertia::render('admin/users/View', [
             'user' => $user,
@@ -99,12 +114,18 @@ class UserController extends Controller
     public function edit(User $user): Response
     {
         Gate::authorize(PermissionName::EDIT_USERS->value);
-        $user->load(['roles', 'permissions']);
+        if (! auth()->user()->can(PermissionName::MANAGE_ALL_USERS->value)) {
+            if (! auth()->user()->can(PermissionName::MANAGE_OWN_USERS->value) || $user->assigned_to !== auth()->id()) {
+                abort(403, 'Unauthorized action.');
+            }
+        }
+        $user->load(['roles', 'permissions', 'assignedUsers']);
 
         return Inertia::render('admin/users/CreateEdit', [
             'user' => $user,
             'roles' => Role::all()->pluck('name'),
             'permissions' => Permission::all()->pluck('name'),
+            'users' => User::select('id', 'name')->get(),
         ]);
     }
 
@@ -126,9 +147,18 @@ class UserController extends Controller
     public function destroy(User $user, DeleteUserAction $action): RedirectResponse
     {
         Gate::authorize(PermissionName::DELETE_USERS->value);
-        $action->execute($user);
+        if (! auth()->user()->can(PermissionName::MANAGE_ALL_USERS->value)) {
+            if (! auth()->user()->can(PermissionName::MANAGE_OWN_USERS->value) || $user->assigned_to !== auth()->id()) {
+                abort(403, 'Unauthorized action.');
+            }
+        }
 
-        Inertia::flash('toast', ['type' => 'success', 'message' => 'User deleted successfully.']);
+        try {
+            $action->execute($user);
+            Inertia::flash('toast', ['type' => 'success', 'message' => 'User deleted successfully.']);
+        } catch (\Exception $e) {
+            Inertia::flash('toast', ['type' => 'error', 'message' => $e->getMessage()]);
+        }
 
         return redirect()->route('admin.users.index');
     }

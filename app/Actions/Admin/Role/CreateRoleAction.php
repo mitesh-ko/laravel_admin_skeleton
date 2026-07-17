@@ -7,6 +7,7 @@ namespace App\Actions\Admin\Role;
 use App\DTOs\RoleDTO;
 use App\Models\Role;
 use Exception;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -19,6 +20,7 @@ class CreateRoleAction
                 $role = Role::create([
                     'name' => $dto->name,
                     'description' => $dto->description,
+                    'created_by' => Auth::id(),
                 ]);
 
                 if (! empty($dto->permissions)) {
