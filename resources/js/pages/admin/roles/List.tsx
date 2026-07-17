@@ -26,10 +26,21 @@ export default function Index() {
     const { delete: destroy } = useForm();
     const tableRef = React.useRef<{ fetchData: () => void }>(null);
 
-    const handleDelete = (id: string | number) => {
-        destroy(admin.roles.destroy.url(id), {
+    const [roleToDelete, setRoleToDelete] = React.useState<{
+        id: string;
+        name: string;
+    } | null>(null);
+
+    const confirmDelete = () => {
+        if (!roleToDelete) {
+            return;
+        }
+
+        destroy(admin.roles.destroy.url(roleToDelete.id), {
             preserveScroll: true,
+            preserveState: true,
             onSuccess: () => {
+                setRoleToDelete(null);
                 tableRef.current?.fetchData();
             },
         });
@@ -64,7 +75,7 @@ export default function Index() {
                 id: 'actions',
                 header: 'Actions',
                 enableSorting: false,
-                cell: ({ row }) => {
+                cell: ({ row }: any) => {
                     if (row.original.name === SystemRole.SUPER_ADMIN) {
                         return (
                             <span className="text-xs text-muted-foreground">
@@ -82,24 +93,23 @@ export default function Index() {
                                             row.original.id,
                                         )}
                                     >
-                                        <Edit2 className="mr-2 h-4 w-4" />
-                                        Edit
+                                        <Edit2 />
                                     </Link>
                                 </Button>
                             )}
                             {hasPermission('Delete Roles') && (
-                                <ConfirmDialog
-                                    title="Delete Role?"
-                                    description={`Are you sure you want to delete the role "${row.original.name}"? This action cannot be undone.`}
-                                    onConfirm={() =>
-                                        handleDelete(row.original.id)
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() =>
+                                        setRoleToDelete({
+                                            id: row.original.id,
+                                            name: row.original.name,
+                                        })
                                     }
                                 >
-                                    <Button variant="destructive" size="sm">
-                                        <Trash2 className="mr-2 h-4 w-4" />
-                                        Delete
-                                    </Button>
-                                </ConfirmDialog>
+                                    <Trash2 className="h-4 w-4 text-destructive" />
+                                </Button>
                             )}
                         </div>
                     );
@@ -136,6 +146,16 @@ export default function Index() {
                     />
                 </div>
             </div>
+
+            <ConfirmDialog
+                open={!!roleToDelete}
+                onOpenChange={(open) => !open && setRoleToDelete(null)}
+                title="Delete Role?"
+                description={`Are you sure you want to delete the role "${roleToDelete?.name}"? This action cannot be undone.`}
+                onConfirm={confirmDelete}
+                confirmText="Delete"
+                destructive
+            />
         </>
     );
 }

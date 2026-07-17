@@ -17,6 +17,10 @@ class DeleteRoleAction
             throw new \InvalidArgumentException('Cannot delete Super Admin role.');
         }
 
+        if ($role->users()->exists()) {
+            throw new \InvalidArgumentException('Cannot delete role because it is assigned to one or more users. Please remove the role from all users first.');
+        }
+
         try {
             return $role->delete();
         } catch (Exception $e) {

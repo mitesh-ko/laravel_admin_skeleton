@@ -106,10 +106,11 @@ class RoleController extends Controller
         }
         try {
             $action->execute($role);
-
-            return back()->with('success', 'Role deleted successfully.');
+            Inertia::flash('toast', ['type' => 'success', 'message' => 'Role deleted successfully.']);
         } catch (\Exception $e) {
-            return back()->with('error', $e->getMessage());
+            Inertia::flash('toast', ['type' => 'error', 'message' => $e->getMessage()]);
         }
+
+        return redirect()->route('admin.roles.index');
     }
 }
