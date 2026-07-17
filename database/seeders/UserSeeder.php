@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Enums\SystemRole;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -24,5 +25,15 @@ class UserSeeder extends Seeder
                 ]
             );
         }
+
+        $admin = User::firstOrCreate(
+            ['email' => 'admin@throtik.com'],
+            [
+                'name' => 'Admin',
+                'password' => Hash::make($password),
+            ]
+        );
+
+        $admin->assignRole(SystemRole::SUPER_ADMIN->value);
     }
 }
