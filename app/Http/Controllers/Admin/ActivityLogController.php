@@ -29,20 +29,18 @@ class ActivityLogController extends Controller
         Gate::authorize(PermissionName::MANAGE_ACTIVITY_LOGS->value);
         $query = Audit::with('user');
 
-        $tableUtility = new TableUtility($query);
-
         $globalSearchFields = [
             ['key' => 'event', 'op' => 'like', 'mask' => '%{value}%'],
             ['key' => 'auditable_type', 'op' => 'like', 'mask' => '%{value}%'],
             ['key' => 'ip_address', 'op' => 'like', 'mask' => '%{value}%'],
         ];
 
-        $tableUtility->applyGlobalSearch($request, new GlobalSearchDTO($globalSearchFields));
-        $tableUtility->applyFilters($request);
-        $tableUtility->sort($request);
-        $tableUtility->paginate($request);
-
-        return $tableUtility->dataTableResponse($request);
+        return TableUtility::process($query, $request, [
+            'globalSearch' => new GlobalSearchDTO($globalSearchFields),
+            'filter',
+            'sort',
+            'paginate',
+        ]);
     }
 
     public function show(Audit $activity_log): Response

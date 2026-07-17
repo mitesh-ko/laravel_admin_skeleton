@@ -27,6 +27,44 @@ class TableUtility
     }
 
     /**
+     * Process the query using a single array of options and return the JsonResponse.
+     *
+     * @param  mixed  $query  The Eloquent query builder.
+     * @param  Request  $request  The current request.
+     * @param  array  $options  Array of operations to apply (e.g. ['filter', 'sort', 'paginate', 'globalSearch' => new GlobalSearchDTO(...)])
+     */
+    public static function process(mixed $query, Request $request, array $options = []): JsonResponse
+    {
+        $utility = new self($query);
+
+        if (isset($options['globalSearch'])) {
+            $utility->applyGlobalSearch($request, $options['globalSearch']);
+        }
+
+        if (in_array('filter', $options, true) || (isset($options['filter']) && $options['filter'])) {
+            $utility->applyFilters($request);
+        }
+
+        if (in_array('sort', $options, true) || (isset($options['sort']) && $options['sort'])) {
+            $utility->sort($request);
+        }
+
+        if (in_array('paginate', $options, true) || (isset($options['paginate']) && $options['paginate'])) {
+            $utility->paginate($request);
+        } elseif (empty($options)) {
+            // Default to applying everything if no options are specified for backward compatibility or simplicity
+            $utility->applyFilters($request);
+            $utility->sort($request);
+            $utility->paginate($request);
+        } else {
+            // We must paginate anyway because dataTableResponse expects $this->data to be a paginator
+            $utility->paginate($request);
+        }
+
+        return $utility->dataTableResponse($request);
+    }
+
+    /**
      * Applies a series of filters to the query.
      *
      * The request should contain a JSON string under the 'filters' key that decodes to an array.

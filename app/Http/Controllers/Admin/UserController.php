@@ -47,13 +47,12 @@ class UserController extends Controller
             })
             ->with('roles');
 
-        $tableUtility = new TableUtility($usersQuery);
-        $tableUtility->applyGlobalSearch($request, new GlobalSearchDTO(User::GLOBAL_SEARCH));
-        $tableUtility->applyFilters($request);
-        $tableUtility->sort($request);
-        $data = $tableUtility->paginate($request);
-
-        return $tableUtility->dataTableResponse($request);
+        return TableUtility::process($usersQuery, $request, [
+            'globalSearch' => new GlobalSearchDTO(User::GLOBAL_SEARCH),
+            'filter',
+            'sort',
+            'paginate',
+        ]);
     }
 
     /**

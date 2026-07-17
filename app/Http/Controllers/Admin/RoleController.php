@@ -29,13 +29,11 @@ class RoleController extends Controller
         Gate::authorize(PermissionName::MANAGE_ROLES->value);
         $query = Role::withCount('permissions');
 
-        $tableUtility = new TableUtility($query);
-        // $tableUtility->applyGlobalSearch($request, new GlobalSearchDTO(User::GLOBAL_SEARCH));
-        $tableUtility->applyFilters($request);
-        $tableUtility->sort($request);
-        $data = $tableUtility->paginate($request);
-
-        return $tableUtility->dataTableResponse($request);
+        return TableUtility::process($query, $request, [
+            'filter',
+            'sort',
+            'paginate',
+        ]);
     }
 
     public function create()
