@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Actions\Admin\Role;
 
+use App\DTOs\RoleDTO;
 use App\Models\Role;
 use Exception;
 use Illuminate\Support\Facades\DB;
@@ -11,17 +12,17 @@ use Illuminate\Support\Facades\Log;
 
 class UpdateRoleAction
 {
-    public function execute(Role $role, array $data): Role
+    public function execute(Role $role, RoleDTO $dto): Role
     {
         try {
-            return DB::transaction(function () use ($role, $data) {
+            return DB::transaction(function () use ($role, $dto) {
                 $role->update([
-                    'name' => $data['name'],
-                    'description' => $data['description'] ?? null,
+                    'name' => $dto->name,
+                    'description' => $dto->description,
                 ]);
 
-                if (isset($data['permissions'])) {
-                    $role->syncPermissions($data['permissions']);
+                if (! empty($dto->permissions)) {
+                    $role->syncPermissions($dto->permissions);
                 } else {
                     $role->syncPermissions([]);
                 }

@@ -8,6 +8,7 @@ use App\Actions\User\CreateUserAction;
 use App\Actions\User\DeleteUserAction;
 use App\Actions\User\UpdateUserAction;
 use App\DTOs\GlobalSearchDTO;
+use App\Enums\PermissionName;
 use App\Enums\SystemRole;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\UserStoreUpdateRequest;
@@ -17,6 +18,7 @@ use App\Utils\TableUtility;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 use Inertia\Response;
 use Spatie\Permission\Models\Role;
@@ -28,6 +30,8 @@ class UserController extends Controller
      */
     public function index(): Response
     {
+        Gate::authorize(PermissionName::MANAGE_USERS->value);
+
         return Inertia::render('admin/users/List');
     }
 
@@ -36,6 +40,7 @@ class UserController extends Controller
      */
     public function search(Request $request): JsonResponse
     {
+        Gate::authorize(PermissionName::MANAGE_USERS->value);
         $usersQuery = User::select(['id', 'name', 'email', 'created_at'])
             ->whereDoesntHave('roles', function ($query) {
                 $query->where('name', SystemRole::SUPER_ADMIN->value);
@@ -56,6 +61,8 @@ class UserController extends Controller
      */
     public function create(): Response
     {
+        Gate::authorize(PermissionName::CREATE_USERS->value);
+
         return Inertia::render('admin/users/CreateEdit', [
             'roles' => Role::all()->pluck('name'),
             'permissions' => Permission::all()->pluck('name'),
@@ -79,6 +86,7 @@ class UserController extends Controller
      */
     public function show(User $user): Response
     {
+        Gate::authorize(PermissionName::MANAGE_USERS->value);
         $user->load(['roles', 'permissions']);
 
         return Inertia::render('admin/users/View', [
@@ -91,6 +99,7 @@ class UserController extends Controller
      */
     public function edit(User $user): Response
     {
+        Gate::authorize(PermissionName::EDIT_USERS->value);
         $user->load(['roles', 'permissions']);
 
         return Inertia::render('admin/users/CreateEdit', [
@@ -117,6 +126,7 @@ class UserController extends Controller
      */
     public function destroy(User $user, DeleteUserAction $action): RedirectResponse
     {
+        Gate::authorize(PermissionName::DELETE_USERS->value);
         $action->execute($user);
 
         Inertia::flash('toast', ['type' => 'success', 'message' => 'User deleted successfully.']);

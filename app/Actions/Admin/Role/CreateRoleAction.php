@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Actions\Admin\Role;
 
+use App\DTOs\RoleDTO;
 use App\Models\Role;
 use Exception;
 use Illuminate\Support\Facades\DB;
@@ -11,17 +12,17 @@ use Illuminate\Support\Facades\Log;
 
 class CreateRoleAction
 {
-    public function execute(array $data): Role
+    public function execute(RoleDTO $dto): Role
     {
         try {
-            return DB::transaction(function () use ($data) {
+            return DB::transaction(function () use ($dto) {
                 $role = Role::create([
-                    'name' => $data['name'],
-                    'description' => $data['description'] ?? null,
+                    'name' => $dto->name,
+                    'description' => $dto->description,
                 ]);
 
-                if (! empty($data['permissions'])) {
-                    $role->syncPermissions($data['permissions']);
+                if (! empty($dto->permissions)) {
+                    $role->syncPermissions($dto->permissions);
                 }
 
                 return $role;

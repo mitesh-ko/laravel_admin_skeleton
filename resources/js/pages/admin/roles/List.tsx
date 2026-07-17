@@ -7,6 +7,7 @@ import { ConfirmDialog } from '@/components/confirm-dialog';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useAppFormat } from '@/hooks/use-app-format';
+import { usePermissions } from '@/hooks/use-permissions';
 import AppLayout from '@/layouts/app-layout';
 import admin from '@/routes/admin';
 import { SystemRole } from '@/types/roles';
@@ -21,6 +22,7 @@ type Role = {
 
 export default function Index() {
     const { formatDateTime } = useAppFormat();
+    const { hasPermission } = usePermissions();
     const { delete: destroy } = useForm();
     const tableRef = React.useRef<{ fetchData: () => void }>(null);
 
@@ -73,24 +75,32 @@ export default function Index() {
 
                     return (
                         <div className="flex justify-end gap-2 pr-4">
-                            <Button variant="outline" size="sm" asChild>
-                                <Link
-                                    href={admin.roles.edit.url(row.original.id)}
-                                >
-                                    <Edit2 className="mr-2 h-4 w-4" />
-                                    Edit
-                                </Link>
-                            </Button>
-                            <ConfirmDialog
-                                title="Delete Role?"
-                                description={`Are you sure you want to delete the role "${row.original.name}"? This action cannot be undone.`}
-                                onConfirm={() => handleDelete(row.original.id)}
-                            >
-                                <Button variant="destructive" size="sm">
-                                    <Trash2 className="mr-2 h-4 w-4" />
-                                    Delete
+                            {hasPermission('Edit Roles') && (
+                                <Button variant="outline" size="sm" asChild>
+                                    <Link
+                                        href={admin.roles.edit.url(
+                                            row.original.id,
+                                        )}
+                                    >
+                                        <Edit2 className="mr-2 h-4 w-4" />
+                                        Edit
+                                    </Link>
                                 </Button>
-                            </ConfirmDialog>
+                            )}
+                            {hasPermission('Delete Roles') && (
+                                <ConfirmDialog
+                                    title="Delete Role?"
+                                    description={`Are you sure you want to delete the role "${row.original.name}"? This action cannot be undone.`}
+                                    onConfirm={() =>
+                                        handleDelete(row.original.id)
+                                    }
+                                >
+                                    <Button variant="destructive" size="sm">
+                                        <Trash2 className="mr-2 h-4 w-4" />
+                                        Delete
+                                    </Button>
+                                </ConfirmDialog>
+                            )}
                         </div>
                     );
                 },
@@ -105,12 +115,14 @@ export default function Index() {
             <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
                 <div className="mb-4 flex items-center justify-between">
                     <h2 className="text-2xl font-bold tracking-tight">Roles</h2>
-                    <Button asChild>
-                        <Link href={admin.roles.create.url()}>
-                            <Plus className="mr-2 h-4 w-4" />
-                            Add Role
-                        </Link>
-                    </Button>
+                    {hasPermission('Create Roles') && (
+                        <Button asChild>
+                            <Link href={admin.roles.create.url()}>
+                                <Plus className="mr-2 h-4 w-4" />
+                                Add Role
+                            </Link>
+                        </Button>
+                    )}
                 </div>
 
                 <div className="mt-4">

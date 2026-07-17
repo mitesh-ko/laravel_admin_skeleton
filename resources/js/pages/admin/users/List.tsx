@@ -13,12 +13,14 @@ import {
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { useAppFormat } from '@/hooks/use-app-format';
+import { usePermissions } from '@/hooks/use-permissions';
 import AppLayout from '@/layouts/app-layout';
 import admin from '@/routes/admin';
 import type { User } from '@/types/models/user';
 
 export default function Index() {
     const { formatDate } = useAppFormat();
+    const { hasPermission } = usePermissions();
     const { delete: destroy } = useForm();
     const tableRef = React.useRef<{ fetchData: () => void }>(null);
 
@@ -97,18 +99,22 @@ export default function Index() {
                                     <Eye />
                                 </Link>
                             </Button>
-                            <Button variant="outline" size="sm" asChild>
-                                <Link href={admin.users.edit.url(user.id)}>
-                                    <Pen />
-                                </Link>
-                            </Button>
-                            <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => handleDelete(user.id)}
-                            >
-                                <Trash2 className="text-destructive" />
-                            </Button>
+                            {hasPermission('Edit Users') && (
+                                <Button variant="outline" size="sm" asChild>
+                                    <Link href={admin.users.edit.url(user.id)}>
+                                        <Pen />
+                                    </Link>
+                                </Button>
+                            )}
+                            {hasPermission('Delete Users') && (
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => handleDelete(user.id)}
+                                >
+                                    <Trash2 className="text-destructive" />
+                                </Button>
+                            )}
                             <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
                                     <Button variant="outline" size="sm">
@@ -141,9 +147,13 @@ export default function Index() {
             <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
                 <div className="mb-4 flex items-center justify-between">
                     <h2 className="text-2xl font-bold tracking-tight">Users</h2>
-                    <Button asChild>
-                        <Link href={admin.users.create.url()}>Create User</Link>
-                    </Button>
+                    {hasPermission('Create Users') && (
+                        <Button asChild>
+                            <Link href={admin.users.create.url()}>
+                                Create User
+                            </Link>
+                        </Button>
+                    )}
                 </div>
 
                 <div className="mt-4">

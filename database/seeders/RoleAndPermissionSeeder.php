@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Enums\PermissionName;
 use App\Enums\SystemRole;
 use App\Models\Permission;
 use App\Models\Role;
@@ -20,26 +21,29 @@ class RoleAndPermissionSeeder extends Seeder
 
         $modules = [
             'Dashboard' => [
-                'Manage Dashboard',
+                PermissionName::MANAGE_DASHBOARD->value,
             ],
             'Users' => [
-                'Manage Users',
-                'Manage All Users',
-                'Manage Own Users',
-                'Create Users',
-                'Edit Users',
-                'Delete Users',
-                'Change Status Users',
-                'Reset Password Users',
+                PermissionName::MANAGE_USERS->value,
+                PermissionName::MANAGE_ALL_USERS->value,
+                PermissionName::MANAGE_OWN_USERS->value,
+                PermissionName::CREATE_USERS->value,
+                PermissionName::EDIT_USERS->value,
+                PermissionName::DELETE_USERS->value,
+                PermissionName::CHANGE_STATUS_USERS->value,
+                PermissionName::RESET_PASSWORD_USERS->value,
             ],
             'Roles' => [
-                'Manage Roles',
-                'Manage All Roles',
-                'Manage Own Roles',
-                'View Roles',
-                'Create Roles',
-                'Edit Roles',
-                'Delete Roles',
+                PermissionName::MANAGE_ROLES->value,
+                PermissionName::MANAGE_ALL_ROLES->value,
+                PermissionName::MANAGE_OWN_ROLES->value,
+                PermissionName::VIEW_ROLES->value,
+                PermissionName::CREATE_ROLES->value,
+                PermissionName::EDIT_ROLES->value,
+                PermissionName::DELETE_ROLES->value,
+            ],
+            'Activity Logs' => [
+                PermissionName::MANAGE_ACTIVITY_LOGS->value,
             ],
         ];
 

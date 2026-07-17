@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Requests\Admin;
 
 use App\DTOs\UserDTO;
+use App\Enums\PermissionName;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -16,7 +17,11 @@ class UserStoreUpdateRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        if ($this->isMethod('post')) {
+            return $this->user()->can(PermissionName::CREATE_USERS->value);
+        }
+
+        return $this->user()->can(PermissionName::EDIT_USERS->value);
     }
 
     /**

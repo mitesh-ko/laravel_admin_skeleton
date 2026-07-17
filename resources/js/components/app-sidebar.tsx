@@ -20,11 +20,14 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
+import { usePermissions } from '@/hooks/use-permissions';
 import { dashboard } from '@/routes';
 import admin from '@/routes/admin';
 import type { NavItem } from '@/types';
 
-const mainNavItems: NavItem[] = [
+type AppNavItem = NavItem & { permission?: string };
+
+const mainNavItems: AppNavItem[] = [
     {
         title: 'Dashboard',
         href: dashboard(),
@@ -34,16 +37,19 @@ const mainNavItems: NavItem[] = [
         title: 'Users',
         href: admin.users.index.url(),
         icon: Users,
+        permission: 'Manage Users',
     },
     {
         title: 'Activity Logs',
         href: admin.activityLogs.index.url(),
         icon: Activity,
+        permission: 'Manage Activity Logs',
     },
     {
         title: 'Roles',
         href: admin.roles.index.url(),
         icon: ShieldHalf,
+        permission: 'Manage Roles',
     },
 ];
 
@@ -61,6 +67,12 @@ const footerNavItems: NavItem[] = [
 ];
 
 export function AppSidebar() {
+    const { hasPermission } = usePermissions();
+
+    const filteredNavItems = mainNavItems.filter(
+        (item) => !item.permission || hasPermission(item.permission),
+    );
+
     return (
         <Sidebar collapsible="icon" variant="inset">
             <SidebarHeader>
@@ -76,7 +88,7 @@ export function AppSidebar() {
             </SidebarHeader>
 
             <SidebarContent>
-                <NavMain items={mainNavItems} />
+                <NavMain items={filteredNavItems} />
             </SidebarContent>
 
             <SidebarFooter>
