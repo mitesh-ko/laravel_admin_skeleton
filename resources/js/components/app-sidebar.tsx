@@ -4,6 +4,7 @@ import {
     BookOpen,
     FolderGit2,
     LayoutGrid,
+    ShieldHalf,
     Users,
 } from 'lucide-react';
 import AppLogo from '@/components/app-logo';
@@ -38,6 +39,11 @@ const mainNavItems: NavItem[] = [
         title: 'Activity Logs',
         href: admin.activityLogs.index.url(),
         icon: Activity,
+    },
+    {
+        title: 'Roles',
+        href: admin.roles.index.url(),
+        icon: ShieldHalf,
     },
 ];
 

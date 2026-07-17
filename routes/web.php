@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\ActivityLogController;
+use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -17,6 +18,8 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
     Route::resource('users', UserController::class);
 
     Route::get('api/activity-logs/search', [ActivityLogController::class, 'search'])->name('activity-logs.search');
-    Route::get('activity-logs', [ActivityLogController::class, 'index'])->name('activity-logs.index');
-    Route::get('activity-logs/{audit}', [ActivityLogController::class, 'show'])->name('activity-logs.show');
+    Route::resource('activity-logs', ActivityLogController::class)->only(['index', 'show']);
+
+    Route::get('api/roles/search', [RoleController::class, 'search'])->name('roles.search');
+    Route::resource('roles', RoleController::class);
 });
