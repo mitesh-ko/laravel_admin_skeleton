@@ -17,6 +17,7 @@ class UpdateUserAction
         ]);
 
         $user->syncRoles($data->roles);
+        $user->syncPermissions($data->permissions);
 
         return $user;
     }

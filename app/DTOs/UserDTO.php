@@ -13,6 +13,7 @@ class UserDTO
         public readonly string $name,
         public readonly string $email,
         public readonly array $roles = [],
+        public readonly array $permissions = [],
     ) {}
 
     public static function fromArray(array $data): self
@@ -21,6 +22,7 @@ class UserDTO
             name: $data['name'],
             email: $data['email'],
             roles: $data['roles'] ?? [],
+            permissions: $data['permissions'] ?? [],
         );
     }
 }

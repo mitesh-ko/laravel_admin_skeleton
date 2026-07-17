@@ -112,7 +112,7 @@ export default function View({ audit }: ViewProps) {
                         />
                         <DetailRow
                             label="Module"
-                            value={audit.auditable_type.split('\\').pop()}
+                            value={audit.auditable_type?.split('\\').pop()}
                         />
                         <DetailRow label="Action" value={audit.event} />
                         <DetailRow

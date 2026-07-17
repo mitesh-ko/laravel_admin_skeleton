@@ -40,12 +40,12 @@ class ActivityLogController extends Controller
         return $tableUtility->dataTableResponse($request);
     }
 
-    public function show(Audit $audit): Response
+    public function show(Audit $activity_log): Response
     {
-        $audit->load('user');
+        $activity_log->load('user');
 
         return Inertia::render('admin/activity-logs/View', [
-            'audit' => $audit,
+            'audit' => $activity_log,
         ]);
     }
 }

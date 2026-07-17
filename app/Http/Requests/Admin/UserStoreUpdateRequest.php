@@ -37,6 +37,8 @@ class UserStoreUpdateRequest extends FormRequest
             ],
             'roles' => ['nullable', 'array'],
             'roles.*' => ['string', 'exists:roles,name'],
+            'permissions' => ['nullable', 'array'],
+            'permissions.*' => ['string', 'exists:permissions,name'],
         ];
     }
 

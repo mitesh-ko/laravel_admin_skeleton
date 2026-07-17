@@ -1,6 +1,6 @@
 import { Head, Link, useForm } from '@inertiajs/react';
 import type { ColumnDef } from '@tanstack/react-table';
-import { MoreHorizontal, Pen, Trash2 } from 'lucide-react';
+import { MoreHorizontal, Pen, Trash2, Eye } from 'lucide-react';
 import React from 'react';
 import AdvancedTable from '@/components/advanced-table';
 import { ConfirmDialog } from '@/components/confirm-dialog';
@@ -92,6 +92,11 @@ export default function Index() {
 
                     return (
                         <div className="flex justify-end space-x-2 text-right">
+                            <Button variant="outline" size="sm" asChild>
+                                <Link href={admin.users.show.url(user.id)}>
+                                    <Eye />
+                                </Link>
+                            </Button>
                             <Button variant="outline" size="sm" asChild>
                                 <Link href={admin.users.edit.url(user.id)}>
                                     <Pen />

@@ -27,6 +27,10 @@ class CreateUserAction
             $user->assignRole($data->roles);
         }
 
+        if (! empty($data->permissions)) {
+            $user->givePermissionTo($data->permissions);
+        }
+
         Mail::to($user->email)->send(new UserCreatedMail($user, $password));
 
         return $user;

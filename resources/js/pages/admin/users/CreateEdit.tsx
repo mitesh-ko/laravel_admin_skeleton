@@ -11,16 +11,24 @@ import type { User } from '@/types/models/user';
 interface CreateEditProps {
     user?: User; // Optional, present in edit mode
     roles: string[];
+    permissions: string[];
 }
 
-export default function CreateEdit({ user, roles }: CreateEditProps) {
+export default function CreateEdit({
+    user,
+    roles,
+    permissions,
+}: CreateEditProps) {
     const isEdit = !!user;
     const userRoleNames = user?.roles?.map((r) => r.name) || [];
+    const userPermissionNames =
+        user?.permissions?.map((p: any) => p.name) || [];
 
     const { data, setData, post, put, processing, errors } = useForm({
         name: user?.name || '',
         email: user?.email || '',
         roles: userRoleNames,
+        permissions: userPermissionNames,
     });
 
     const submit = (e: React.FormEvent) => {
@@ -56,7 +64,6 @@ export default function CreateEdit({ user, roles }: CreateEditProps) {
                                 onChange={(e) =>
                                     setData('name', e.target.value)
                                 }
-                                required
                             />
                             <InputError message={errors.name} />
                         </div>
@@ -70,7 +77,6 @@ export default function CreateEdit({ user, roles }: CreateEditProps) {
                                 onChange={(e) =>
                                     setData('email', e.target.value)
                                 }
-                                required
                             />
                             <InputError message={errors.email} />
                         </div>
@@ -107,6 +113,42 @@ export default function CreateEdit({ user, roles }: CreateEditProps) {
                                 </p>
                             )}
                             <InputError message={errors.roles as string} />
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label>Direct Permissions</Label>
+                            <MultiSelect
+                                isMulti
+                                name="permissions"
+                                options={permissions.map((permission) => ({
+                                    value: permission,
+                                    label: permission,
+                                }))}
+                                value={data.permissions.map((permission) => ({
+                                    value: permission,
+                                    label: permission,
+                                }))}
+                                onChange={(selected) =>
+                                    setData(
+                                        'permissions',
+                                        selected
+                                            ? (selected as any[]).map(
+                                                  (option) => option.value,
+                                              )
+                                            : [],
+                                    )
+                                }
+                                placeholder="Select direct permissions..."
+                                className="react-select-container"
+                            />
+                            {permissions.length === 0 && (
+                                <p className="text-sm text-muted-foreground italic">
+                                    No permissions available in the system.
+                                </p>
+                            )}
+                            <InputError
+                                message={errors.permissions as string}
+                            />
                         </div>
 
                         {!isEdit && (

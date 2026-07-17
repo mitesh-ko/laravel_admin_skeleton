@@ -8,8 +8,10 @@ use App\Actions\User\CreateUserAction;
 use App\Actions\User\DeleteUserAction;
 use App\Actions\User\UpdateUserAction;
 use App\DTOs\GlobalSearchDTO;
+use App\Enums\SystemRole;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\UserStoreUpdateRequest;
+use App\Models\Permission;
 use App\Models\User;
 use App\Utils\TableUtility;
 use Illuminate\Http\JsonResponse;
@@ -34,7 +36,11 @@ class UserController extends Controller
      */
     public function search(Request $request): JsonResponse
     {
-        $usersQuery = User::select(['id', 'name', 'email', 'created_at'])->with('roles');
+        $usersQuery = User::select(['id', 'name', 'email', 'created_at'])
+            ->whereDoesntHave('roles', function ($query) {
+                $query->where('name', SystemRole::SUPER_ADMIN->value);
+            })
+            ->with('roles');
 
         $tableUtility = new TableUtility($usersQuery);
         $tableUtility->applyGlobalSearch($request, new GlobalSearchDTO(User::GLOBAL_SEARCH));
@@ -52,6 +58,7 @@ class UserController extends Controller
     {
         return Inertia::render('admin/users/CreateEdit', [
             'roles' => Role::all()->pluck('name'),
+            'permissions' => Permission::all()->pluck('name'),
         ]);
     }
 
@@ -68,15 +75,28 @@ class UserController extends Controller
     }
 
     /**
+     * Display the specified resource.
+     */
+    public function show(User $user): Response
+    {
+        $user->load(['roles', 'permissions']);
+
+        return Inertia::render('admin/users/View', [
+            'user' => $user,
+        ]);
+    }
+
+    /**
      * Show the form for editing the specified resource.
      */
     public function edit(User $user): Response
     {
-        $user->load('roles');
+        $user->load(['roles', 'permissions']);
 
         return Inertia::render('admin/users/CreateEdit', [
             'user' => $user,
             'roles' => Role::all()->pluck('name'),
+            'permissions' => Permission::all()->pluck('name'),
         ]);
     }
 
