@@ -102,4 +102,9 @@ enum PermissionName: string
      * Access and view the system's audit/activity logs.
      */
     case MANAGE_ACTIVITY_LOGS = 'Manage Activity Logs';
+
+    /**
+     * Access and view the system's authentication logs.
+     */
+    case MANAGE_AUTHENTICATION_LOGS = 'Manage Authentication Logs';
 }

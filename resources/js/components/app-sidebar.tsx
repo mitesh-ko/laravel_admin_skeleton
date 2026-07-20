@@ -40,10 +40,20 @@ const mainNavItems: AppNavItem[] = [
         permission: 'Manage Users',
     },
     {
-        title: 'Activity Logs',
-        href: admin.activityLogs.index.url(),
+        title: 'Logs',
+        href: '#',
         icon: Activity,
         permission: 'Manage Activity Logs',
+        items: [
+            {
+                title: 'Activity Logs',
+                href: admin.activityLogs.index.url(),
+            },
+            {
+                title: 'Authentication Logs',
+                href: admin.authenticationLogs.index.url(),
+            },
+        ],
     },
     {
         title: 'Roles',

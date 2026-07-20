@@ -42,8 +42,9 @@ class RoleAndPermissionSeeder extends Seeder
                 PermissionName::EDIT_ROLES->value,
                 PermissionName::DELETE_ROLES->value,
             ],
-            'Activity Logs' => [
+            'Logs' => [
                 PermissionName::MANAGE_ACTIVITY_LOGS->value,
+                PermissionName::MANAGE_AUTHENTICATION_LOGS->value,
             ],
         ];
 
