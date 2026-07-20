@@ -74,7 +74,7 @@ class UserController extends Controller
         return Inertia::render('admin/users/CreateEdit', [
             'roles' => Role::all()->pluck('name'),
             'permissions' => Permission::all()->pluck('name'),
-            'users' => User::select('id', 'name')->get(),
+            'users' => User::getCachedList(),
         ]);
     }
 
@@ -125,7 +125,7 @@ class UserController extends Controller
             'user' => $user,
             'roles' => Role::all()->pluck('name'),
             'permissions' => Permission::all()->pluck('name'),
-            'users' => User::select('id', 'name')->get(),
+            'users' => User::getCachedList(),
         ]);
     }
 

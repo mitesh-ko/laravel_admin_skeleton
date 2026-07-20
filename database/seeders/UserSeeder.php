@@ -29,7 +29,7 @@ class UserSeeder extends Seeder
         $admin = User::firstOrCreate(
             ['email' => 'admin@throtik.com'],
             [
-                'name' => 'Admin',
+                'name' => 'Super Admin',
                 'password' => Hash::make($password),
             ]
         );

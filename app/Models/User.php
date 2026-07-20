@@ -96,4 +96,12 @@ class User extends Authenticatable implements Auditable, PasskeyUser
     {
         return $this->hasMany(Role::class, 'assigned_to');
     }
+
+    /**
+     * Get a cached list of basic user data.
+     */
+    public static function getCachedList()
+    {
+        return cache()->remember('users.select', now()->addWeek(), fn () => self::select('id', 'name')->get()->toArray());
+    }
 }
