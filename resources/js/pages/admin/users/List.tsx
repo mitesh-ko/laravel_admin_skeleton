@@ -125,11 +125,23 @@ export default function Index() {
                                     <DropdownMenuItem onClick={() => {}}>
                                         Login
                                     </DropdownMenuItem>
-                                    <DropdownMenuItem onClick={() => {}}>
-                                        Activity Logs
+                                    <DropdownMenuItem asChild>
+                                        <Link
+                                            href={admin.activityLogs.index.url({
+                                                query: { user_id: user.id },
+                                            })}
+                                        >
+                                            Activity Logs
+                                        </Link>
                                     </DropdownMenuItem>
-                                    <DropdownMenuItem onClick={() => {}}>
-                                        Auth Logs
+                                    <DropdownMenuItem asChild>
+                                        <Link
+                                            href={admin.authenticationLogs.index.url(
+                                                { query: { user_id: user.id } },
+                                            )}
+                                        >
+                                            Auth Logs
+                                        </Link>
                                     </DropdownMenuItem>
                                 </DropdownMenuContent>
                             </DropdownMenu>

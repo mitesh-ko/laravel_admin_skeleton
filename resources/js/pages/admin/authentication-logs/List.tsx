@@ -18,7 +18,13 @@ type AuthLog = {
     location: string | null;
 };
 
-export default function Index() {
+export default function Index({
+    userId,
+    userName,
+}: {
+    userId?: string;
+    userName?: string;
+}) {
     const { formatDateTime } = useAppFormat();
     const tableRef = React.useRef<{ fetchData: () => void }>(null);
 
@@ -112,7 +118,9 @@ export default function Index() {
                 <div className="mb-4 flex items-center justify-between">
                     <div>
                         <h2 className="text-2xl font-bold tracking-tight">
-                            Authentication Logs
+                            {userName
+                                ? `Authentication Logs of "${userName}"`
+                                : 'Authentication Logs'}
                         </h2>
                         <p className="text-sm text-muted-foreground">
                             Monitor successful and failed logins across the
@@ -125,7 +133,9 @@ export default function Index() {
                     <AdvancedTable
                         ref={tableRef}
                         columnsDetails={columns}
-                        dataUrl={admin.authenticationLogs.search.url()}
+                        dataUrl={admin.authenticationLogs.search.url({
+                            query: { user_id: userId },
+                        })}
                         pinnedColumns={{}}
                         enableColumnOrdering={true}
                         enableColumnVisibility={true}

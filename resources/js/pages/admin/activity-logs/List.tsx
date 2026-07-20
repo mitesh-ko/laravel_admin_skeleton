@@ -18,7 +18,13 @@ type Audit = {
     created_at: string;
 };
 
-export default function Index() {
+export default function Index({
+    userId,
+    userName,
+}: {
+    userId?: string;
+    userName?: string;
+}) {
     const { formatDateTime } = useAppFormat();
     const tableRef = React.useRef<{ fetchData: () => void }>(null);
 
@@ -110,7 +116,9 @@ export default function Index() {
             <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
                 <div className="mb-4 flex items-center justify-between">
                     <h2 className="text-2xl font-bold tracking-tight">
-                        Activity Logs
+                        {userName
+                            ? `Activity Logs of "${userName}"`
+                            : 'Activity Logs'}
                     </h2>
                 </div>
 
@@ -118,7 +126,9 @@ export default function Index() {
                     <AdvancedTable
                         ref={tableRef}
                         columnsDetails={columns}
-                        dataUrl={admin.activityLogs.search.url()}
+                        dataUrl={admin.activityLogs.search.url({
+                            query: { user_id: userId },
+                        })}
                         pinnedColumns={{}}
                         enableColumnOrdering={true}
                         enableColumnVisibility={true}

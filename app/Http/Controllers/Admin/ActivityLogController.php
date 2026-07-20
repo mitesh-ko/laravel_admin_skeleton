@@ -7,6 +7,7 @@ namespace App\Http\Controllers\Admin;
 use App\DTOs\GlobalSearchDTO;
 use App\Enums\PermissionName;
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use App\Utils\TableUtility;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -17,17 +18,32 @@ use OwenIt\Auditing\Models\Audit;
 
 class ActivityLogController extends Controller
 {
-    public function index(): Response
+    public function index(Request $request): Response
     {
         Gate::authorize(PermissionName::MANAGE_ACTIVITY_LOGS->value);
 
-        return Inertia::render('admin/activity-logs/List');
+        $userName = null;
+        if ($request->filled('user_id')) {
+            $user = User::find($request->input('user_id'));
+            if ($user) {
+                $userName = $user->name;
+            }
+        }
+
+        return Inertia::render('admin/activity-logs/List', [
+            'userId' => $request->input('user_id'),
+            'userName' => $userName,
+        ]);
     }
 
     public function search(Request $request): JsonResponse
     {
         Gate::authorize(PermissionName::MANAGE_ACTIVITY_LOGS->value);
         $query = Audit::with('user');
+
+        if ($request->filled('user_id')) {
+            $query->where('user_id', $request->input('user_id'));
+        }
 
         $globalSearchFields = [
             ['key' => 'event', 'op' => 'like', 'mask' => '%{value}%'],
