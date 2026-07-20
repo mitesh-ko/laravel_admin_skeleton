@@ -49,7 +49,7 @@ class RoleController extends Controller
         Gate::authorize(PermissionName::CREATE_ROLES->value);
         $permissions = Permission::orderBy('module')->orderBy('id')->get()->groupBy('module');
 
-        return Inertia::render('admin/roles/Form', [
+        return Inertia::render('admin/roles/CreateEdit', [
             'groupedPermissions' => $permissions,
             'role' => null,
             'rolePermissions' => [],
@@ -69,16 +69,11 @@ class RoleController extends Controller
 
     public function edit(Role $role)
     {
-        Gate::authorize(PermissionName::EDIT_ROLES->value);
-        if (! auth()->user()->can(PermissionName::MANAGE_ALL_ROLES->value)) {
-            if (! auth()->user()->can(PermissionName::MANAGE_OWN_ROLES->value) || $role->created_by !== auth()->id()) {
-                abort(403, 'Unauthorized action.');
-            }
-        }
+        Gate::authorize('update', $role);
         $permissions = Permission::orderBy('module')->orderBy('id')->get()->groupBy('module');
         $rolePermissions = $role->permissions->pluck('name')->toArray();
 
-        return Inertia::render('admin/roles/Form', [
+        return Inertia::render('admin/roles/CreateEdit', [
             'groupedPermissions' => $permissions,
             'role' => $role,
             'rolePermissions' => $rolePermissions,
@@ -98,12 +93,7 @@ class RoleController extends Controller
 
     public function destroy(Role $role, DeleteRoleAction $action)
     {
-        Gate::authorize(PermissionName::DELETE_ROLES->value);
-        if (! auth()->user()->can(PermissionName::MANAGE_ALL_ROLES->value)) {
-            if (! auth()->user()->can(PermissionName::MANAGE_OWN_ROLES->value) || $role->created_by !== auth()->id()) {
-                abort(403, 'Unauthorized action.');
-            }
-        }
+        Gate::authorize('delete', $role);
         try {
             $action->execute($role);
             Inertia::flash('toast', ['type' => 'success', 'message' => 'Role deleted successfully.']);

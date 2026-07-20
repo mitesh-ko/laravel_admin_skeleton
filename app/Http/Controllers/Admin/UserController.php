@@ -95,12 +95,7 @@ class UserController extends Controller
      */
     public function show(User $user): Response
     {
-        Gate::authorize(PermissionName::MANAGE_USERS->value);
-        if (! auth()->user()->can(PermissionName::MANAGE_ALL_USERS->value)) {
-            if (! auth()->user()->can(PermissionName::MANAGE_OWN_USERS->value) || $user->assigned_to !== auth()->id()) {
-                abort(403, 'Unauthorized action.');
-            }
-        }
+        Gate::authorize('view', $user);
         $user->load(['roles', 'permissions', 'assignedUsers', 'assignedToUser']);
 
         return Inertia::render('admin/users/View', [
@@ -113,12 +108,7 @@ class UserController extends Controller
      */
     public function edit(User $user): Response
     {
-        Gate::authorize(PermissionName::EDIT_USERS->value);
-        if (! auth()->user()->can(PermissionName::MANAGE_ALL_USERS->value)) {
-            if (! auth()->user()->can(PermissionName::MANAGE_OWN_USERS->value) || $user->assigned_to !== auth()->id()) {
-                abort(403, 'Unauthorized action.');
-            }
-        }
+        Gate::authorize('update', $user);
         $user->load(['roles', 'permissions', 'assignedUsers']);
 
         return Inertia::render('admin/users/CreateEdit', [
@@ -146,12 +136,7 @@ class UserController extends Controller
      */
     public function destroy(User $user, DeleteUserAction $action): RedirectResponse
     {
-        Gate::authorize(PermissionName::DELETE_USERS->value);
-        if (! auth()->user()->can(PermissionName::MANAGE_ALL_USERS->value)) {
-            if (! auth()->user()->can(PermissionName::MANAGE_OWN_USERS->value) || $user->assigned_to !== auth()->id()) {
-                abort(403, 'Unauthorized action.');
-            }
-        }
+        Gate::authorize('delete', $user);
 
         try {
             $action->execute($user);

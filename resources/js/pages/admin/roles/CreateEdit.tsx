@@ -32,7 +32,7 @@ type RoleFormProps = {
     rolePermissions: string[];
 };
 
-export default function Form({
+export default function CreateEdit({
     role,
     groupedPermissions,
     rolePermissions,
@@ -43,12 +43,12 @@ export default function Form({
         permissions: rolePermissions || [],
     });
 
-    const isEditing = !!role;
+    const isEdit = !!role;
 
     const submit = (e: React.FormEvent) => {
         e.preventDefault();
 
-        if (isEditing) {
+        if (isEdit) {
             put(admin.roles.update.url(role.id));
         } else {
             post(admin.roles.store.url());
@@ -107,12 +107,12 @@ export default function Form({
         allPermissions.length > 0;
 
     return (
-        <AppLayout>
-            <Head title={isEditing ? 'Edit Role' : 'Add Role'} />
+        <>
+            <Head title={isEdit ? 'Edit Role' : 'Add Role'} />
             <div className="flex h-full flex-1 flex-col gap-6 p-4">
                 <div className="flex items-center justify-between">
                     <h2 className="text-2xl font-bold tracking-tight">
-                        {isEditing ? 'Edit Role' : 'Add Role'}
+                        {isEdit ? 'Edit Role' : 'Add Role'}
                     </h2>
                     <div className="flex items-center gap-2">
                         <Button variant="outline" asChild>
@@ -123,7 +123,7 @@ export default function Form({
                         </Button>
                         <Button onClick={submit} disabled={processing}>
                             <Save className="mr-2 h-4 w-4" />
-                            {isEditing ? 'Save Changes' : 'Create Role'}
+                            {isEdit ? 'Save Changes' : 'Create Role'}
                         </Button>
                     </div>
                 </div>
@@ -328,6 +328,33 @@ export default function Form({
                     </Card>
                 </div>
             </div>
-        </AppLayout>
+        </>
     );
 }
+
+CreateEdit.layout = (page: any) => {
+    const isEdit = !!page.props?.role;
+
+    return (
+        <AppLayout
+            breadcrumbs={[
+                {
+                    title: 'Admin',
+                    href: '#',
+                },
+                {
+                    title: 'Role',
+                    href: admin.roles.index.url(),
+                },
+                {
+                    title: isEdit ? 'Edit' : 'Create',
+                    href: isEdit
+                        ? admin.roles.edit.url(page.props.role.id)
+                        : admin.roles.create.url(),
+                },
+            ]}
+        >
+            {page}
+        </AppLayout>
+    );
+};
