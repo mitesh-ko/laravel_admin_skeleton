@@ -45,7 +45,7 @@ return [
             'location' => function_exists('geoip'),
 
             // The Notification class to send
-            'template' => NewDevice::class,
+            'template' => App\Notifications\Auth\NewDevice::class,
 
             // Rate limiting for notifications
             'rate_limit' => env('NEW_DEVICE_NOTIFICATION_RATE_LIMIT', 3),
@@ -64,7 +64,7 @@ return [
             'location' => function_exists('geoip'),
 
             // The Notification class to send
-            'template' => FailedLogin::class,
+            'template' => App\Notifications\Auth\FailedLogin::class,
 
             // Rate limiting for notifications
             'rate_limit' => env('FAILED_LOGIN_NOTIFICATION_RATE_LIMIT', 5),
@@ -79,7 +79,7 @@ return [
             'location' => function_exists('geoip'),
 
             // The Notification class to send
-            'template' => SuspiciousActivity::class,
+            'template' => App\Notifications\Auth\SuspiciousActivity::class,
 
             // Rate limiting for notifications
             'rate_limit' => env('SUSPICIOUS_ACTIVITY_NOTIFICATION_RATE_LIMIT', 3),
