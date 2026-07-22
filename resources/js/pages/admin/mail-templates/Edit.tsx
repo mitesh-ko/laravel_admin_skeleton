@@ -295,7 +295,7 @@ export default function Edit({ template }: Props) {
                             {/* Render Full Email Body */}
                             <iframe
                                 key={previewKey}
-                                className="min-h-[500px] w-full flex-1 border-0"
+                                className="pointer-events-none min-h-[500px] w-full flex-1 border-0 select-none"
                                 title="Email Preview"
                                 src={`${admin.mailTemplates.preview.url(template.id)}?t=${previewKey}`}
                             />

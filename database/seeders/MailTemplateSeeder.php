@@ -40,5 +40,18 @@ class MailTemplateSeeder extends Seeder
                 ],
             ]
         );
+        MailTemplate::firstOrCreate(
+            ['key' => 'user_created'],
+            [
+                'subject' => 'Welcome to our platform - Your Account Details',
+                'html_content' => '<p># Welcome, {ACCOUNT_NAME}!</p><p>An account has been created for you on our platform.</p><p>Your login details are as follows:</p><ul><li><strong>Email:</strong> {EMAIL}</li><li><strong>Password:</strong> {PASSWORD}</li></ul><p>Please log in and change your password as soon as possible.</p><p><a href="{LOGIN_URL}">Log In</a></p>',
+                'available_snippets' => [
+                    'ACCOUNT_NAME',
+                    'EMAIL',
+                    'PASSWORD',
+                    'LOGIN_URL',
+                ],
+            ]
+        );
     }
 }

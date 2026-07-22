@@ -3,12 +3,14 @@
 namespace App\Mail;
 
 use App\Models\User;
+use App\Services\MailTemplateRendererService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\HtmlString;
 
 class UserCreatedMail extends Mailable
 {
@@ -27,8 +29,16 @@ class UserCreatedMail extends Mailable
      */
     public function envelope(): Envelope
     {
+        $renderer = app(MailTemplateRendererService::class);
+        $subject = $renderer->renderSubject('user_created', [
+            'ACCOUNT_NAME' => $this->user->name,
+            'EMAIL' => $this->user->email,
+            'PASSWORD' => $this->password,
+            'LOGIN_URL' => route('login'),
+        ]);
+
         return new Envelope(
-            subject: 'Welcome to our platform - Your Account Details',
+            subject: $subject,
         );
     }
 
@@ -37,8 +47,19 @@ class UserCreatedMail extends Mailable
      */
     public function content(): Content
     {
+        $renderer = app(MailTemplateRendererService::class);
+        $html = $renderer->render('user_created', [
+            'ACCOUNT_NAME' => $this->user->name,
+            'EMAIL' => $this->user->email,
+            'PASSWORD' => $this->password,
+            'LOGIN_URL' => route('login'),
+        ]);
+
         return new Content(
-            markdown: 'emails.users.created',
+            markdown: 'emails.generic',
+            with: [
+                'html' => new HtmlString($html),
+            ],
         );
     }
 
