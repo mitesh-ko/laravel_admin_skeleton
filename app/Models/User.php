@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Str;
 use Laravel\Fortify\Contracts\PasskeyUser;
 use Laravel\Fortify\PasskeyAuthenticatable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
@@ -33,7 +34,7 @@ use Spatie\Permission\Traits\HasRoles;
  * @property Carbon|null $updated_at
  */
 #[Fillable(['name', 'email', 'password', 'created_by', 'assigned_to'])]
-#[Hidden(['password', 'two_factor_secret', 'two_factor_recovery_codes', 'remember_token'])]
+#[Hidden(['password', 'two_factor_secret', 'two_factor_recovery_codes', 'remember_token', 'impersonation_token'])]
 class User extends Authenticatable implements Auditable, PasskeyUser
 {
     /** @use HasFactory<UserFactory> */
@@ -64,6 +65,26 @@ class User extends Authenticatable implements Auditable, PasskeyUser
             'password' => 'hashed',
             'two_factor_confirmed_at' => 'datetime',
         ];
+    }
+
+    /**
+     * Perform any actions required after the model boots.
+     */
+    protected static function booted(): void
+    {
+        static::creating(function (User $user) {
+            if (empty($user->impersonation_token)) {
+                $user->generateImpersonationToken();
+            }
+        });
+    }
+
+    /**
+     * Generate a new impersonation token for the user.
+     */
+    public function generateImpersonationToken(): void
+    {
+        $this->impersonation_token = strtoupper(Str::random(4));
     }
 
     /**

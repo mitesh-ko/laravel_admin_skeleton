@@ -121,8 +121,14 @@ export default function List() {
                                     </Button>
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent align="end">
-                                    <DropdownMenuItem onClick={() => {}}>
-                                        Login
+                                    <DropdownMenuItem asChild>
+                                        <Link
+                                            href={admin.impersonate.url(
+                                                user.id,
+                                            )}
+                                        >
+                                            Login
+                                        </Link>
                                     </DropdownMenuItem>
                                     <DropdownMenuItem asChild>
                                         <Link

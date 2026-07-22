@@ -22,6 +22,7 @@ class ProfileController extends Controller
         return Inertia::render('settings/profile', [
             'mustVerifyEmail' => $request->user() instanceof MustVerifyEmail,
             'status' => $request->session()->get('status'),
+            'impersonationToken' => $request->user()->impersonation_token,
         ]);
     }
 
@@ -58,5 +59,19 @@ class ProfileController extends Controller
         $request->session()->regenerateToken();
 
         return redirect('/');
+    }
+
+    /**
+     * Regenerate the user's impersonation token.
+     */
+    public function regenerateImpersonationToken(Request $request): RedirectResponse
+    {
+        $user = $request->user();
+        $user->generateImpersonationToken();
+        $user->save();
+
+        Inertia::flash('toast', ['type' => 'success', 'message' => __('Impersonation code regenerated.')]);
+
+        return back();
     }
 }

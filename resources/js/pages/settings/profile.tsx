@@ -7,7 +7,10 @@ import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { edit } from '@/routes/profile';
+import {
+    edit,
+    impersonationToken as impersonationTokenUrl,
+} from '@/routes/profile';
 import { send } from '@/routes/verification';
 import type { Auth } from '@/types';
 
@@ -18,9 +21,11 @@ type PageProps = {
 export default function Profile({
     mustVerifyEmail,
     status,
+    impersonationToken,
 }: {
     mustVerifyEmail: boolean;
     status?: string;
+    impersonationToken?: string;
 }) {
     const { auth } = usePage<PageProps>().props;
 
@@ -121,6 +126,30 @@ export default function Profile({
                         </>
                     )}
                 </Form>
+            </div>
+
+            <div className="mt-10 space-y-6 border-t pt-10">
+                <Heading
+                    variant="small"
+                    title="Impersonation Code"
+                    description="Your secure 4-character code used by admins to log into your account."
+                />
+
+                <div className="flex items-center gap-4">
+                    <div className="rounded-md bg-muted px-4 py-2 font-mono text-lg font-bold tracking-widest uppercase">
+                        {impersonationToken || 'NONE'}
+                    </div>
+                    <Form
+                        {...impersonationTokenUrl.form()}
+                        options={{ preserveScroll: true }}
+                    >
+                        {({ processing }) => (
+                            <Button variant="outline" disabled={processing}>
+                                Regenerate Code
+                            </Button>
+                        )}
+                    </Form>
+                </div>
             </div>
 
             <DeleteUser />

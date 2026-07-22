@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\ActivityLogController;
 use App\Http\Controllers\Admin\AuthenticationLogController;
+use App\Http\Controllers\Admin\ImpersonationController;
 use App\Http\Controllers\Admin\MailTemplateController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\UserController;
@@ -18,6 +19,10 @@ require __DIR__.'/settings.php';
 Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('api/users/search', [UserController::class, 'search'])->name('users.search');
     Route::resource('users', UserController::class);
+
+    Route::get('impersonate/{user}', [ImpersonationController::class, 'create'])->name('impersonate');
+    Route::post('impersonate/{user}', [ImpersonationController::class, 'store'])->name('impersonate.store');
+    Route::post('impersonate-leave', [ImpersonationController::class, 'leave'])->name('impersonate.leave');
 
     Route::get('api/activity-logs/search', [ActivityLogController::class, 'search'])->name('activity-logs.search');
     Route::resource('activity-logs', ActivityLogController::class)->only(['index', 'show']);
