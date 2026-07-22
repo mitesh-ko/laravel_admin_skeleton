@@ -4,7 +4,6 @@ import { CheckCircle2, XCircle } from 'lucide-react';
 import React from 'react';
 import AdvancedTable from '@/components/advanced-table';
 import { useAppFormat } from '@/hooks/use-app-format';
-import AppLayout from '@/layouts/app-layout';
 import admin from '@/routes/admin';
 
 type AuthLog = {
@@ -18,7 +17,7 @@ type AuthLog = {
     location: string | null;
 };
 
-export default function Index({
+export default function List({
     userId,
     userName,
 }: {
@@ -146,4 +145,15 @@ export default function Index({
     );
 }
 
-Index.layout = (page: React.ReactNode) => <AppLayout children={page} />;
+List.layout = {
+    breadcrumbs: [
+        {
+            title: 'Admin',
+            href: '#',
+        },
+        {
+            title: 'Authentication Logs',
+            href: admin.authenticationLogs.index.url(),
+        },
+    ],
+};

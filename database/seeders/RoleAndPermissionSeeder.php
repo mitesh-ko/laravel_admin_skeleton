@@ -46,6 +46,9 @@ class RoleAndPermissionSeeder extends Seeder
                 PermissionName::MANAGE_ACTIVITY_LOGS->value,
                 PermissionName::MANAGE_AUTHENTICATION_LOGS->value,
             ],
+            'Mail Templates' => [
+                PermissionName::MANAGE_MAIL_TEMPLATES->value,
+            ],
         ];
 
         foreach ($modules as $module => $permissions) {

@@ -4,6 +4,7 @@ import {
     BookOpen,
     FolderGit2,
     LayoutGrid,
+    Mail,
     ShieldHalf,
     Users,
 } from 'lucide-react';
@@ -60,6 +61,12 @@ const mainNavItems: AppNavItem[] = [
         href: admin.roles.index.url(),
         icon: ShieldHalf,
         permission: 'Manage Roles',
+    },
+    {
+        title: 'Mail Templates',
+        href: admin.mailTemplates.index.url(),
+        icon: Mail,
+        permission: 'Manage Mail Templates',
     },
 ];
 

@@ -8,7 +8,6 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useAppFormat } from '@/hooks/use-app-format';
 import { usePermissions } from '@/hooks/use-permissions';
-import AppLayout from '@/layouts/app-layout';
 import admin from '@/routes/admin';
 import { SystemRole } from '@/types/roles';
 
@@ -20,7 +19,7 @@ type Role = {
     created_at: string;
 };
 
-export default function Index() {
+export default function List() {
     const { formatDateTime } = useAppFormat();
     const { hasPermission } = usePermissions();
     const { delete: destroy } = useForm();
@@ -116,7 +115,7 @@ export default function Index() {
                 },
             },
         ],
-        [formatDateTime],
+        [formatDateTime, hasPermission],
     );
 
     return (
@@ -160,19 +159,15 @@ export default function Index() {
     );
 }
 
-Index.layout = (page: any) => (
-    <AppLayout
-        breadcrumbs={[
-            {
-                title: 'Admin',
-                href: '#',
-            },
-            {
-                title: 'Role',
-                href: admin.roles.index.url(),
-            },
-        ]}
-    >
-        {page}
-    </AppLayout>
-);
+List.layout = {
+    breadcrumbs: [
+        {
+            title: 'Admin',
+            href: '#',
+        },
+        {
+            title: 'Role',
+            href: admin.roles.index.url(),
+        },
+    ],
+};

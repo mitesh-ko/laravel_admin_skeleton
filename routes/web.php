@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\ActivityLogController;
 use App\Http\Controllers\Admin\AuthenticationLogController;
+use App\Http\Controllers\Admin\MailTemplateController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\UserController;
 use Illuminate\Support\Facades\Route;
@@ -26,4 +27,8 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
 
     Route::get('api/roles/search', [RoleController::class, 'search'])->name('roles.search');
     Route::resource('roles', RoleController::class);
+
+    Route::get('api/mail-templates/search', [MailTemplateController::class, 'search'])->name('mail-templates.search');
+    Route::get('api/mail-templates/{mail_template}/preview', [MailTemplateController::class, 'preview'])->name('mail-templates.preview');
+    Route::resource('mail-templates', MailTemplateController::class)->only(['index', 'edit', 'update']);
 });

@@ -2,7 +2,6 @@ import { Head, Link } from '@inertiajs/react';
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { useAppFormat } from '@/hooks/use-app-format';
-import AppLayout from '@/layouts/app-layout';
 import admin from '@/routes/admin';
 
 type Audit = {
@@ -152,4 +151,19 @@ export default function View({ audit }: ViewProps) {
     );
 }
 
-View.layout = (page: React.ReactNode) => <AppLayout children={page} />;
+View.layout = {
+    breadcrumbs: [
+        {
+            title: 'Admin',
+            href: '#',
+        },
+        {
+            title: 'Activity Logs',
+            href: admin.activityLogs.index.url(),
+        },
+        {
+            title: 'View',
+            href: '#',
+        },
+    ],
+};

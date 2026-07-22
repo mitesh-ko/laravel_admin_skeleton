@@ -2,21 +2,31 @@
 
 namespace App\Notifications\Auth;
 
+use App\Services\MailTemplateRendererService;
 use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Support\HtmlString;
 use Rappasoft\LaravelAuthenticationLog\Notifications\NewDevice as BaseNewDevice;
 
 class NewDevice extends BaseNewDevice
 {
     public function toMail($notifiable)
     {
+        $renderer = app(MailTemplateRendererService::class);
+        $data = [
+            'ACCOUNT_NAME' => $notifiable->name ?? $notifiable->email,
+            'TIME' => $this->authenticationLog->login_at->toDateTimeString(),
+            'IP_ADDRESS' => $this->authenticationLog->ip_address,
+            'BROWSER' => $this->authenticationLog->user_agent,
+            'LOCATION' => $this->authenticationLog->location && $this->authenticationLog->location['default'] === false
+                ? ($this->authenticationLog->location['city'] ?? 'N/A').', '.($this->authenticationLog->location['state'] ?? 'N/A')
+                : 'Unknown',
+        ];
+
+        $html = $renderer->render('auth_new_device', $data);
+        $subject = $renderer->renderSubject('auth_new_device', $data);
+
         return (new MailMessage)
-            ->subject(__('Your :app account logged in from a new device.', ['app' => config('app.name')]))
-            ->markdown('emails.auths.new', [
-                'account' => $notifiable,
-                'time' => $this->authenticationLog->login_at,
-                'ipAddress' => $this->authenticationLog->ip_address,
-                'browser' => $this->authenticationLog->user_agent,
-                'location' => $this->authenticationLog->location,
-            ]);
+            ->subject($subject)
+            ->markdown('emails.generic', ['html' => new HtmlString($html)]);
     }
 }

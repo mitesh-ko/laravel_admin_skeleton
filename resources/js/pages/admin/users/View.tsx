@@ -25,7 +25,6 @@ import {
     TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { useAppFormat } from '@/hooks/use-app-format';
-import AppLayout from '@/layouts/app-layout';
 import admin from '@/routes/admin';
 import type { User } from '@/types/models/user';
 
@@ -246,19 +245,19 @@ export default function View({ user }: ViewProps) {
         </>
     );
 }
-View.layout = (page: any) => (
-    <AppLayout
-        breadcrumbs={[
-            {
-                title: 'Admin',
-                href: '#',
-            },
-            {
-                title: 'Users',
-                href: admin.users.index.url(),
-            },
-        ]}
-    >
-        {page}
-    </AppLayout>
-);
+View.layout = {
+    breadcrumbs: [
+        {
+            title: 'Admin',
+            href: '#',
+        },
+        {
+            title: 'Users',
+            href: admin.users.index.url(),
+        },
+        {
+            title: 'View',
+            href: '#',
+        },
+    ],
+};

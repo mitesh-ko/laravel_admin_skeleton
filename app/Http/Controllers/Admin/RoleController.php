@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Actions\Admin\Role\CreateRoleAction;
-use App\Actions\Admin\Role\DeleteRoleAction;
-use App\Actions\Admin\Role\UpdateRoleAction;
+use App\Actions\Role\CreateRoleAction;
+use App\Actions\Role\DeleteRoleAction;
+use App\Actions\Role\UpdateRoleAction;
 use App\Enums\PermissionName;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\RoleStoreUpdateRequest;

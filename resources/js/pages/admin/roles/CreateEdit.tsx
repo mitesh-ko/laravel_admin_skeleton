@@ -13,7 +13,6 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import AppLayout from '@/layouts/app-layout';
 import admin from '@/routes/admin';
 
 type Permission = {
@@ -332,29 +331,19 @@ export default function CreateEdit({
     );
 }
 
-CreateEdit.layout = (page: any) => {
-    const isEdit = !!page.props?.role;
-
-    return (
-        <AppLayout
-            breadcrumbs={[
-                {
-                    title: 'Admin',
-                    href: '#',
-                },
-                {
-                    title: 'Role',
-                    href: admin.roles.index.url(),
-                },
-                {
-                    title: isEdit ? 'Edit' : 'Create',
-                    href: isEdit
-                        ? admin.roles.edit.url(page.props.role.id)
-                        : admin.roles.create.url(),
-                },
-            ]}
-        >
-            {page}
-        </AppLayout>
-    );
+CreateEdit.layout = {
+    breadcrumbs: [
+        {
+            title: 'Admin',
+            href: '#',
+        },
+        {
+            title: 'Role',
+            href: admin.roles.index.url(),
+        },
+        {
+            title: 'Manage',
+            href: '#',
+        },
+    ],
 };

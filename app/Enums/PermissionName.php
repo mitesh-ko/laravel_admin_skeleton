@@ -107,4 +107,13 @@ enum PermissionName: string
      * Access and view the system's authentication logs.
      */
     case MANAGE_AUTHENTICATION_LOGS = 'Manage Authentication Logs';
+
+    // ---------------------------------------------------------
+    // Mail Templates
+    // ---------------------------------------------------------
+
+    /**
+     * Access and manage mail templates (edit email text, design, snippets).
+     */
+    case MANAGE_MAIL_TEMPLATES = 'Manage Mail Templates';
 }

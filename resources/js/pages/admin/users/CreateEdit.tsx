@@ -4,7 +4,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import MultiSelect from '@/components/ui/multi-select';
-import AppLayout from '@/layouts/app-layout';
 import admin from '@/routes/admin';
 import type { User } from '@/types/models/user';
 
@@ -212,29 +211,19 @@ export default function CreateEdit({
     );
 }
 
-CreateEdit.layout = (page: any) => {
-    const isEdit = !!page.props?.user;
-
-    return (
-        <AppLayout
-            breadcrumbs={[
-                {
-                    title: 'Admin',
-                    href: '#',
-                },
-                {
-                    title: 'Users',
-                    href: admin.users.index.url(),
-                },
-                {
-                    title: isEdit ? 'Edit' : 'Create',
-                    href: isEdit
-                        ? admin.users.edit.url(page.props.user.id)
-                        : admin.users.create.url(),
-                },
-            ]}
-        >
-            {page}
-        </AppLayout>
-    );
+CreateEdit.layout = {
+    breadcrumbs: [
+        {
+            title: 'Admin',
+            href: '#',
+        },
+        {
+            title: 'Users',
+            href: admin.users.index.url(),
+        },
+        {
+            title: 'Manage',
+            href: '#',
+        },
+    ],
 };

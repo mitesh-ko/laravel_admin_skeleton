@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Actions\Admin\Role;
+namespace App\Actions\Role;
 
 use App\DTOs\RoleDTO;
 use App\Models\Role;

@@ -6,7 +6,6 @@ import AdvancedTable from '@/components/advanced-table';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useAppFormat } from '@/hooks/use-app-format';
-import AppLayout from '@/layouts/app-layout';
 import admin from '@/routes/admin';
 
 type Audit = {
@@ -18,7 +17,7 @@ type Audit = {
     created_at: string;
 };
 
-export default function Index({
+export default function List({
     userId,
     userName,
 }: {
@@ -139,4 +138,15 @@ export default function Index({
     );
 }
 
-Index.layout = (page: React.ReactNode) => <AppLayout children={page} />;
+List.layout = {
+    breadcrumbs: [
+        {
+            title: 'Admin',
+            href: '#',
+        },
+        {
+            title: 'Activity Logs',
+            href: admin.activityLogs.index.url(),
+        },
+    ],
+};
