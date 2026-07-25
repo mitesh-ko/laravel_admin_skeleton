@@ -152,6 +152,7 @@ export default function CreateEdit({
                                             setData('name', e.target.value)
                                         }
                                         placeholder="e.g. HR Manager, Team Lead, Accountant"
+                                        autoFocus
                                     />
                                     {errors.name && (
                                         <p className="text-sm text-destructive">

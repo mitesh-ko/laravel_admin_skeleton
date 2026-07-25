@@ -860,14 +860,16 @@ const AdvancedTable = forwardRef(function AdvancedTable(
                                     />
                                 </SelectTrigger>
                                 <SelectContent side="top">
-                                    {[10, 20, 30, 40, 50].map((pageSize) => (
-                                        <SelectItem
-                                            key={pageSize}
-                                            value={`${pageSize}`}
-                                        >
-                                            {pageSize}
-                                        </SelectItem>
-                                    ))}
+                                    {[10, 20, 50, 75, 100, 200].map(
+                                        (pageSize) => (
+                                            <SelectItem
+                                                key={pageSize}
+                                                value={`${pageSize}`}
+                                            >
+                                                {pageSize}
+                                            </SelectItem>
+                                        ),
+                                    )}
                                 </SelectContent>
                             </Select>
                         </div>

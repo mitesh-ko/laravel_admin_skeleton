@@ -71,6 +71,7 @@ export default function CreateEdit({
                                 onChange={(e) =>
                                     setData('name', e.target.value)
                                 }
+                                autoFocus
                             />
                             <InputError message={errors.name} />
                         </div>

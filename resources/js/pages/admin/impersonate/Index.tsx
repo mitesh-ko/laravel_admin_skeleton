@@ -11,7 +11,11 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
+import {
+    InputOTP,
+    InputOTPGroup,
+    InputOTPSlot,
+} from '@/components/ui/input-otp';
 import { Label } from '@/components/ui/label';
 import AuthLayout from '@/layouts/auth/auth-simple-layout';
 import admin from '@/routes/admin';
@@ -58,18 +62,35 @@ export default function ImpersonateIndex({ user }: Props) {
                     <CardContent className="space-y-4">
                         <div className="space-y-2">
                             <Label htmlFor="pin">Impersonation PIN</Label>
-                            <Input
-                                id="pin"
-                                type="text"
-                                placeholder="e.g. A1B2"
-                                maxLength={4}
-                                value={data.pin}
-                                onChange={(e) =>
-                                    setData('pin', e.target.value.toUpperCase())
-                                }
-                                className="text-center font-mono text-lg tracking-widest uppercase"
-                                required
-                            />
+                            <div className="flex justify-center">
+                                <InputOTP
+                                    maxLength={4}
+                                    value={data.pin}
+                                    onChange={(value) =>
+                                        setData('pin', value.toUpperCase())
+                                    }
+                                    autoFocus
+                                >
+                                    <InputOTPGroup>
+                                        <InputOTPSlot
+                                            index={0}
+                                            className="h-12 w-12 font-mono text-lg uppercase"
+                                        />
+                                        <InputOTPSlot
+                                            index={1}
+                                            className="h-12 w-12 font-mono text-lg uppercase"
+                                        />
+                                        <InputOTPSlot
+                                            index={2}
+                                            className="h-12 w-12 font-mono text-lg uppercase"
+                                        />
+                                        <InputOTPSlot
+                                            index={3}
+                                            className="h-12 w-12 font-mono text-lg uppercase"
+                                        />
+                                    </InputOTPGroup>
+                                </InputOTP>
+                            </div>
                             {errors.pin && (
                                 <p className="text-sm text-destructive">
                                     {errors.pin}
