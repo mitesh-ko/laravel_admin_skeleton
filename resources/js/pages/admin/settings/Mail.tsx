@@ -279,3 +279,15 @@ export default function Mail({ settings }: MailSettingsProps) {
         </>
     );
 }
+Mail.layout = {
+    breadcrumbs: [
+        {
+            title: 'Admin',
+            href: '#',
+        },
+        {
+            title: 'Mail Settings',
+            href: admin.settings.editMail.url(),
+        },
+    ],
+};

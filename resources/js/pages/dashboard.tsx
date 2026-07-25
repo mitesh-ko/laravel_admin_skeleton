@@ -16,6 +16,7 @@ import {
     CardTitle,
     CardDescription,
 } from '@/components/ui/card';
+import { dashboard } from '@/routes';
 
 interface ActivityLog {
     id: number;
@@ -203,3 +204,12 @@ export default function Dashboard({
         </>
     );
 }
+
+Dashboard.layout = {
+    breadcrumbs: [
+        {
+            title: 'Dashboard',
+            href: dashboard(),
+        },
+    ],
+};
