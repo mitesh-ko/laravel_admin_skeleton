@@ -18,3 +18,4 @@ export interface SharedData {
     };
     [key: string]: unknown;
 }
+export * from './dashboard';

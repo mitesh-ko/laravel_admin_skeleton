@@ -6,6 +6,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\UtmVisit;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -52,11 +53,25 @@ class DashboardController extends Controller
                 ];
             });
 
+        $utmTrafficData = UtmVisit::selectRaw('COALESCE(utm_source, "Direct/None") as source, COALESCE(utm_campaign, "Unknown") as campaign, COUNT(*) as count')
+            ->groupBy('utm_source', 'utm_campaign')
+            ->orderByDesc('count')
+            ->limit(10)
+            ->get();
+
+        $utmRegistrationData = User::selectRaw('COALESCE(utm_source, "Direct/None") as source, COALESCE(utm_campaign, "Unknown") as campaign, COUNT(*) as count')
+            ->groupBy('utm_source', 'utm_campaign')
+            ->orderByDesc('count')
+            ->limit(10)
+            ->get();
+
         return Inertia::render('dashboard', [
             'totalUsers' => $totalUsers,
             'newRegistrations' => $newRegistrations,
             'loginChartData' => $loginChartData,
             'latestActivities' => $latestActivities,
+            'utmTrafficData' => $utmTrafficData,
+            'utmRegistrationData' => $utmRegistrationData,
         ]);
     }
 }

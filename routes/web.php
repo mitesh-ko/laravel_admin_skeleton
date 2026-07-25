@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\MailTemplateController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\UtmSourceController;
 use Illuminate\Support\Facades\Route;
 
 Route::inertia('/', 'welcome')->name('home');
@@ -43,4 +44,7 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
     Route::get('/settings/mail', [SettingController::class, 'editMail'])->name('settings.edit-mail');
     Route::put('/settings/mail', [SettingController::class, 'updateMail'])->name('settings.update-mail');
     Route::resource('mail-templates', MailTemplateController::class)->only(['index', 'edit', 'update']);
+
+    Route::get('api/utm-sources/search', [UtmSourceController::class, 'search'])->name('utm-sources.search');
+    Route::resource('utm-sources', UtmSourceController::class);
 });

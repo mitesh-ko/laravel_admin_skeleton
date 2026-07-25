@@ -126,4 +126,9 @@ class User extends Authenticatable implements Auditable, PasskeyUser
     {
         return cache()->remember('users.select', now()->addWeek(), fn () => self::select('id', 'name')->get()->toArray());
     }
+
+    public function utmVisits()
+    {
+        return $this->hasMany(UtmVisit::class);
+    }
 }

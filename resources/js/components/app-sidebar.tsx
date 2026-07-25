@@ -8,6 +8,7 @@ import {
     Settings,
     ShieldHalf,
     Users,
+    Megaphone,
 } from 'lucide-react';
 import AppLogo from '@/components/app-logo';
 import { NavFooter } from '@/components/nav-footer';
@@ -67,6 +68,12 @@ const mainNavItems: AppNavItem[] = [
         href: admin.roles.index.url(),
         icon: ShieldHalf,
         permission: 'Manage Roles',
+    },
+    {
+        title: 'UTM Sources',
+        href: admin.utmSources.index.url(),
+        icon: Megaphone,
+        permission: 'Manage UTM Sources',
     },
     {
         title: 'Mail Templates',

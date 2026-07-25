@@ -53,6 +53,12 @@ class RoleAndPermissionSeeder extends Seeder
                 PermissionName::MANAGE_GENERAL_SETTINGS->value,
                 PermissionName::MANAGE_MAIL_SETTINGS->value,
             ],
+            'Marketing' => [
+                PermissionName::MANAGE_UTM_SOURCES->value,
+                PermissionName::CREATE_UTM_SOURCES->value,
+                PermissionName::EDIT_UTM_SOURCES->value,
+                PermissionName::DELETE_UTM_SOURCES->value,
+            ],
         ];
 
         foreach ($modules as $module => $permissions) {

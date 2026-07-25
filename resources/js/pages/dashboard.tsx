@@ -17,25 +17,20 @@ import {
     CardDescription,
 } from '@/components/ui/card';
 import { dashboard } from '@/routes';
-
-interface ActivityLog {
-    id: number;
-    user_name: string;
-    event: string;
-    auditable_type: string;
-    created_at: string;
-}
-
-interface LoginChartData {
-    date: string;
-    logins: number;
-}
+import type {
+    ActivityLog,
+    LoginChartData,
+    UtmTrafficData,
+    UtmRegistrationData,
+} from '@/types';
 
 interface Props {
     totalUsers: number;
     newRegistrations: number;
     loginChartData: LoginChartData[];
     latestActivities: ActivityLog[];
+    utmTrafficData: UtmTrafficData[];
+    utmRegistrationData: UtmRegistrationData[];
 }
 
 export default function Dashboard({
@@ -43,6 +38,8 @@ export default function Dashboard({
     newRegistrations,
     loginChartData,
     latestActivities,
+    utmTrafficData,
+    utmRegistrationData,
 }: Props) {
     return (
         <>
@@ -194,6 +191,81 @@ export default function Dashboard({
                                 {latestActivities.length === 0 && (
                                     <div className="pt-4 text-center text-sm text-muted-foreground">
                                         No recent activity
+                                    </div>
+                                )}
+                            </div>
+                        </CardContent>
+                    </Card>
+                </div>
+
+                {/* Marketing & UTM Analytics Section */}
+                <div className="grid gap-6 md:grid-cols-2">
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Traffic by Campaign</CardTitle>
+                            <CardDescription>
+                                Top campaigns driving traffic
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="space-y-4">
+                                {utmTrafficData.map((data, index) => (
+                                    <div
+                                        key={index}
+                                        className="flex items-center justify-between"
+                                    >
+                                        <div className="space-y-1">
+                                            <p className="text-sm leading-none font-medium">
+                                                {data.campaign}
+                                            </p>
+                                            <p className="text-xs text-muted-foreground">
+                                                Source: {data.source}
+                                            </p>
+                                        </div>
+                                        <div className="text-sm font-medium">
+                                            {data.count} clicks
+                                        </div>
+                                    </div>
+                                ))}
+                                {utmTrafficData.length === 0 && (
+                                    <div className="pt-4 text-center text-sm text-muted-foreground">
+                                        No traffic data recorded.
+                                    </div>
+                                )}
+                            </div>
+                        </CardContent>
+                    </Card>
+
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Registrations by Campaign</CardTitle>
+                            <CardDescription>
+                                Top campaigns driving user signups
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="space-y-4">
+                                {utmRegistrationData.map((data, index) => (
+                                    <div
+                                        key={index}
+                                        className="flex items-center justify-between"
+                                    >
+                                        <div className="space-y-1">
+                                            <p className="text-sm leading-none font-medium">
+                                                {data.campaign}
+                                            </p>
+                                            <p className="text-xs text-muted-foreground">
+                                                Source: {data.source}
+                                            </p>
+                                        </div>
+                                        <div className="text-sm font-medium text-green-600">
+                                            {data.count} users
+                                        </div>
+                                    </div>
+                                ))}
+                                {utmRegistrationData.length === 0 && (
+                                    <div className="pt-4 text-center text-sm text-muted-foreground">
+                                        No registration data recorded.
                                     </div>
                                 )}
                             </div>

@@ -130,4 +130,12 @@ enum PermissionName: string
      * Access and manage mail settings (SMTP credentials, etc).
      */
     case MANAGE_MAIL_SETTINGS = 'Manage Mail Settings';
+    // ---------------------------------------------------------
+    // Marketing & UTM Sources
+    // ---------------------------------------------------------
+
+    case MANAGE_UTM_SOURCES = 'Manage UTM Sources';
+    case CREATE_UTM_SOURCES = 'Create UTM Sources';
+    case EDIT_UTM_SOURCES = 'Edit UTM Sources';
+    case DELETE_UTM_SOURCES = 'Delete UTM Sources';
 }
