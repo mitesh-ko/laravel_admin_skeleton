@@ -5,6 +5,7 @@ import {
     FolderGit2,
     LayoutGrid,
     Mail,
+    Settings,
     ShieldHalf,
     Users,
 } from 'lucide-react';
@@ -67,6 +68,22 @@ const mainNavItems: AppNavItem[] = [
         href: admin.mailTemplates.index.url(),
         icon: Mail,
         permission: 'Manage Mail Templates',
+    },
+    {
+        title: 'System Settings',
+        href: '#',
+        icon: Settings,
+        permission: 'Manage System Settings',
+        items: [
+            {
+                title: 'General Settings',
+                href: admin.settings.editGeneral.url(),
+            },
+            {
+                title: 'Mail Settings',
+                href: admin.authenticationLogs.index.url(),
+            },
+        ],
     },
 ];
 

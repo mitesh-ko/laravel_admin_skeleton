@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\AuthenticationLogController;
 use App\Http\Controllers\Admin\ImpersonationController;
 use App\Http\Controllers\Admin\MailTemplateController;
 use App\Http\Controllers\Admin\RoleController;
+use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -35,5 +36,7 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
 
     Route::get('api/mail-templates/search', [MailTemplateController::class, 'search'])->name('mail-templates.search');
     Route::get('api/mail-templates/{mail_template}/preview', [MailTemplateController::class, 'preview'])->name('mail-templates.preview');
+    Route::get('/settings/general', [SettingController::class, 'editGeneral'])->name('settings.edit-general');
+    Route::put('/settings/general', [SettingController::class, 'updateGeneral'])->name('settings.update-general');
     Route::resource('mail-templates', MailTemplateController::class)->only(['index', 'edit', 'update']);
 });

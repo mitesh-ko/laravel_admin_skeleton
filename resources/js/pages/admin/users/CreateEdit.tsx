@@ -1,4 +1,5 @@
 import { Head, Link, useForm } from '@inertiajs/react';
+import { ArrowLeft } from 'lucide-react';
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -53,7 +54,10 @@ export default function CreateEdit({
                         {isEdit ? `Edit User: ${user.name}` : 'Create User'}
                     </h2>
                     <Button variant="outline" asChild>
-                        <Link href={admin.users.index.url()}>Cancel</Link>
+                        <Link href={admin.users.index.url()}>
+                            <ArrowLeft className="mr-2 h-4 w-4" />
+                            Back
+                        </Link>
                     </Button>
                 </div>
 

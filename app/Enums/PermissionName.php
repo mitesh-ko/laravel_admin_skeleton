@@ -116,4 +116,13 @@ enum PermissionName: string
      * Access and manage mail templates (edit email text, design, snippets).
      */
     case MANAGE_MAIL_TEMPLATES = 'Manage Mail Templates';
+
+    // ---------------------------------------------------------
+    // Settings
+    // ---------------------------------------------------------
+
+    /**
+     * Access and manage global system settings.
+     */
+    case MANAGE_GENERAL_SETTINGS = 'Manage General Settings';
 }
