@@ -1,6 +1,6 @@
 import { Head, Link, useForm } from '@inertiajs/react';
 import { ShieldAlert, ArrowLeft } from 'lucide-react';
-import * as React from 'react';
+import type { FormEvent, ReactNode } from 'react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -20,20 +20,20 @@ import { Label } from '@/components/ui/label';
 import AuthLayout from '@/layouts/auth/auth-simple-layout';
 import admin from '@/routes/admin';
 
-type Props = {
+interface Props {
     user: {
         id: string;
         name: string;
         email: string;
     };
-};
+}
 
 export default function ImpersonateIndex({ user }: Props) {
     const { data, setData, post, processing, errors } = useForm({
         pin: '',
     });
 
-    const submit = (e: React.FormEvent) => {
+    const submit = (e: FormEvent) => {
         e.preventDefault();
         post(admin.impersonate.store.url(user.id));
     };
@@ -124,4 +124,4 @@ export default function ImpersonateIndex({ user }: Props) {
     );
 }
 
-ImpersonateIndex.layout = (page: any) => <AuthLayout children={page} />;
+ImpersonateIndex.layout = (page: ReactNode) => <AuthLayout children={page} />;

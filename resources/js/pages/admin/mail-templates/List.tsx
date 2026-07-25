@@ -1,22 +1,16 @@
 import { Head, Link } from '@inertiajs/react';
 import type { ColumnDef } from '@tanstack/react-table';
 import { Edit } from 'lucide-react';
-import * as React from 'react';
+import { useRef, useMemo } from 'react';
 import AdvancedTable from '@/components/advanced-table';
 import { Button } from '@/components/ui/button';
 import admin from '@/routes/admin';
-
-type MailTemplate = {
-    id: string;
-    key: string;
-    subject: string;
-    created_at: string;
-};
+import type { MailTemplate } from '@/types/models/mail-template';
 
 export default function List() {
-    const tableRef = React.useRef<{ fetchData: () => void }>(null);
+    const tableRef = useRef<{ fetchData: () => void }>(null);
 
-    const columns = React.useMemo<ColumnDef<MailTemplate>[]>(
+    const columns = useMemo<ColumnDef<MailTemplate>[]>(
         () => [
             {
                 accessorKey: 'key',

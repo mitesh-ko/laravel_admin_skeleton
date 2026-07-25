@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Spinner } from '@/components/ui/spinner';
 
-type Props = {
+interface Props {
     routes?: {
         options: UrlMethodPair;
         submit: UrlMethodPair;
@@ -15,7 +15,7 @@ type Props = {
     label?: string;
     loadingLabel?: string;
     separator?: string;
-};
+}
 
 export default function PasskeyVerify({
     routes,

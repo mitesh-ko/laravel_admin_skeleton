@@ -15,13 +15,13 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import admin from '@/routes/admin';
 
-type Permission = {
+interface Permission {
     id: string;
     name: string;
     module: string;
-};
+}
 
-type RoleFormProps = {
+interface RoleFormProps {
     role?: {
         id: string;
         name: string;
@@ -29,7 +29,7 @@ type RoleFormProps = {
     };
     groupedPermissions: Record<string, Permission[]>;
     rolePermissions: string[];
-};
+}
 
 export default function CreateEdit({
     role,

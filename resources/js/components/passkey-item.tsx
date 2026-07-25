@@ -12,10 +12,10 @@ import {
 } from '@/components/ui/dialog';
 import type { Passkey } from '@/types/auth';
 
-type Props = {
+interface Props {
     passkey: Passkey;
     onDelete: (id: number, onError: () => void) => void;
-};
+}
 
 export default function PasskeyItem({ passkey, onDelete }: Props) {
     const [isDeleting, setIsDeleting] = useState(false);

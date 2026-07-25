@@ -12,11 +12,11 @@ import {
 } from '@/components/ui/card';
 import { regenerateRecoveryCodes } from '@/routes/two-factor';
 
-type Props = {
+interface Props {
     recoveryCodesList: string[];
     fetchRecoveryCodes: () => Promise<void>;
     errors: string[];
-};
+}
 
 export default function TwoFactorRecoveryCodes({
     recoveryCodesList,

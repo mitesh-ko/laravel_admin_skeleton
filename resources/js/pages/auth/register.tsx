@@ -9,9 +9,9 @@ import { Spinner } from '@/components/ui/spinner';
 import { login } from '@/routes';
 import { store } from '@/routes/register';
 
-type Props = {
+interface Props {
     passwordRules: string;
-};
+}
 
 export default function Register({ passwordRules }: Props) {
     return (

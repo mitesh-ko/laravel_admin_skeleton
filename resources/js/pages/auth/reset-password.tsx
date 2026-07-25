@@ -7,11 +7,11 @@ import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
 import { update } from '@/routes/password';
 
-type Props = {
+interface Props {
     token: string;
     email: string;
     passwordRules: string;
-};
+}
 
 export default function ResetPassword({ token, email, passwordRules }: Props) {
     return (

@@ -12,10 +12,9 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { edit } from '@/routes/security';
 
-type Props = {
+interface Props extends ManagePasskeysProps, ManageTwoFactorProps {
     passwordRules: string;
-} & ManagePasskeysProps &
-    ManageTwoFactorProps;
+}
 
 export default function Security(props: Props) {
     const passwordInput = useRef<HTMLInputElement>(null);

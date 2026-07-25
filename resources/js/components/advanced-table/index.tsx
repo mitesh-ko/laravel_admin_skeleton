@@ -125,11 +125,11 @@ interface AdvancedTableProps {
     showSrNo?: boolean;
 }
 
-type DensityOption = {
+interface DensityOption {
     label: string;
     value: string | null;
     icon: React.ReactNode;
-};
+}
 
 const densityItems: DensityOption[] = [
     { label: 'Density', value: null, icon: null },

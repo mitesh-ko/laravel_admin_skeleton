@@ -1,21 +1,14 @@
 import { Head, Link } from '@inertiajs/react';
 import type { ColumnDef } from '@tanstack/react-table';
 import { Eye } from 'lucide-react';
-import React from 'react';
+import { useRef, useMemo } from 'react';
 import AdvancedTable from '@/components/advanced-table';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useAppFormat } from '@/hooks/use-app-format';
 import admin from '@/routes/admin';
 
-type Audit = {
-    id: string | number;
-    event: string;
-    auditable_type: string;
-    user: { name: string } | null;
-    ip_address: string;
-    created_at: string;
-};
+import type { Audit } from '@/types/models/audit';
 
 export default function List({
     userId,
@@ -25,7 +18,7 @@ export default function List({
     userName?: string;
 }) {
     const { formatDateTime } = useAppFormat();
-    const tableRef = React.useRef<{ fetchData: () => void }>(null);
+    const tableRef = useRef<{ fetchData: () => void }>(null);
 
     const getEventBadgeStyles = (event: string) => {
         switch (event.toLowerCase()) {
@@ -42,7 +35,7 @@ export default function List({
         }
     };
 
-    const columns = React.useMemo<ColumnDef<Audit>[]>(
+    const columns = useMemo<ColumnDef<Audit>[]>(
         () => [
             {
                 accessorKey: 'event',

@@ -1,4 +1,4 @@
-export type User = {
+export interface User {
     id: number;
     name: string;
     email: string;
@@ -9,29 +9,29 @@ export type User = {
     updated_at: string;
     impersonation_token?: string;
     [key: string]: unknown;
-};
+}
 
-export type Auth = {
+export interface Auth {
     user: User;
     permissions: string[];
     isImpersonating?: boolean;
-};
+}
 
 /* @chisel-passkeys */
-export type Passkey = {
+export interface Passkey {
     id: number;
     name: string;
     authenticator: string | null;
     created_at_diff: string;
     last_used_at_diff: string | null;
-};
+}
 /* @end-chisel-passkeys */
 
-export type TwoFactorSetupData = {
+export interface TwoFactorSetupData {
     svg: string;
     url: string;
-};
+}
 
-export type TwoFactorSecretKey = {
+export interface TwoFactorSecretKey {
     secretKey: string;
-};
+}

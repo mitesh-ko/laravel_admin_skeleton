@@ -8,7 +8,7 @@ import type { Auth } from './auth';
  * Typed representation of shared Inertia page props
  * (mirrors the InertiaConfig.sharedPageProps declaration in global.d.ts)
  */
-export type SharedData = {
+export interface SharedData {
     name: string;
     auth: Auth;
     sidebarOpen: boolean;
@@ -17,4 +17,4 @@ export type SharedData = {
         datetime: string;
     };
     [key: string]: unknown;
-};
+}

@@ -1,35 +1,16 @@
 import { Head, Link } from '@inertiajs/react';
-import React from 'react';
+import type { ReactNode } from 'react';
 import { Button } from '@/components/ui/button';
 import { useAppFormat } from '@/hooks/use-app-format';
 import admin from '@/routes/admin';
 
-type Audit = {
-    id: string | number;
-    user_type: string;
-    user_id: string | number;
-    event: string;
-    auditable_type: string;
-    old_values: Record<string, any>;
-    new_values: Record<string, any>;
-    url: string;
-    ip_address: string;
-    user_agent: string;
-    created_at: string;
-    user: { name: string } | null;
-};
+import type { AuditDetail } from '@/types/models/audit';
 
 interface ViewProps {
-    audit: Audit;
+    audit: AuditDetail;
 }
 
-const DetailRow = ({
-    label,
-    value,
-}: {
-    label: string;
-    value: React.ReactNode;
-}) => (
+const DetailRow = ({ label, value }: { label: string; value: ReactNode }) => (
     <div className="grid grid-cols-[150px_1fr] items-center gap-4 border-b border-border/50 px-4 py-3 transition-colors last:border-0 hover:bg-muted/50">
         <div className="flex justify-between pr-4 text-muted-foreground">
             <span>{label}</span>
@@ -43,7 +24,7 @@ const ValueTable = ({
     values,
     type,
 }: {
-    values: Record<string, any>;
+    values: Record<string, unknown>;
     type: 'old' | 'new';
 }) => {
     const hasValues = values && Object.keys(values).length > 0;

@@ -19,12 +19,12 @@ export type WhenCurrentUrlFn = <TIfTrue, TIfFalse = null>(
     ifFalse?: TIfFalse,
 ) => TIfTrue | TIfFalse;
 
-export type UseCurrentUrlReturn = {
+export interface UseCurrentUrlReturn {
     currentUrl: string;
     isCurrentUrl: IsCurrentUrlFn;
     isCurrentOrParentUrl: IsCurrentOrParentUrlFn;
     whenCurrentUrl: WhenCurrentUrlFn;
-};
+}
 
 export function useCurrentUrl(): UseCurrentUrlReturn {
     const page = usePage();

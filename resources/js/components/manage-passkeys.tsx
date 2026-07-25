@@ -6,10 +6,10 @@ import PasskeyItem from '@/components/passkey-item';
 import PasskeyRegistration from '@/components/passkey-register';
 import type { Passkey } from '@/types/auth';
 
-export type Props = {
+export interface Props {
     canManagePasskeys?: boolean;
     passkeys?: Passkey[];
-};
+}
 
 const EmptyState = () => {
     return (

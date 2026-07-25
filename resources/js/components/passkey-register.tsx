@@ -5,9 +5,9 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
-type Props = {
+interface Props {
     onSuccess: () => void;
-};
+}
 
 export default function PasskeyRegistration({ onSuccess }: Props) {
     const [name, setName] = useState(() => {

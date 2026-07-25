@@ -2,7 +2,7 @@ import { useHttp } from '@inertiajs/react';
 import { useCallback, useState } from 'react';
 import { qrCode, recoveryCodes, secretKey } from '@/routes/two-factor';
 
-export type UseTwoFactorAuthReturn = {
+export interface UseTwoFactorAuthReturn {
     qrCodeSvg: string | null;
     manualSetupKey: string | null;
     recoveryCodesList: string[];
@@ -15,7 +15,7 @@ export type UseTwoFactorAuthReturn = {
     fetchSetupKey: () => Promise<void>;
     fetchSetupData: () => Promise<void>;
     fetchRecoveryCodes: () => Promise<void>;
-};
+}
 
 export const OTP_MAX_LENGTH = 6;
 

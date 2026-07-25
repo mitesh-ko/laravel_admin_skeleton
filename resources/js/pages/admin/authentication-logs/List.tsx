@@ -1,12 +1,12 @@
 import { Head } from '@inertiajs/react';
 import type { ColumnDef } from '@tanstack/react-table';
 import { CheckCircle2, XCircle } from 'lucide-react';
-import React from 'react';
+import { useRef, useMemo } from 'react';
 import AdvancedTable from '@/components/advanced-table';
 import { useAppFormat } from '@/hooks/use-app-format';
 import admin from '@/routes/admin';
 
-type AuthLog = {
+interface AuthLog {
     id: string | number;
     authenticatable: { name: string } | null;
     ip_address: string;
@@ -15,7 +15,7 @@ type AuthLog = {
     login_successful: boolean;
     logout_at: string | null;
     location: string | null;
-};
+}
 
 export default function List({
     userId,
@@ -25,9 +25,9 @@ export default function List({
     userName?: string;
 }) {
     const { formatDateTime } = useAppFormat();
-    const tableRef = React.useRef<{ fetchData: () => void }>(null);
+    const tableRef = useRef<{ fetchData: () => void }>(null);
 
-    const columns = React.useMemo<ColumnDef<AuthLog>[]>(
+    const columns = useMemo<ColumnDef<AuthLog>[]>(
         () => [
             {
                 accessorKey: 'authenticatable.name',

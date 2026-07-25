@@ -1,7 +1,7 @@
 import { Head, Link, useForm } from '@inertiajs/react';
 import type { ColumnDef } from '@tanstack/react-table';
 import { Edit2, Plus, Trash2 } from 'lucide-react';
-import React from 'react';
+import { useRef, useState, useMemo } from 'react';
 import AdvancedTable from '@/components/advanced-table';
 import { ConfirmDialog } from '@/components/confirm-dialog';
 import { Badge } from '@/components/ui/badge';
@@ -11,21 +11,21 @@ import { usePermissions } from '@/hooks/use-permissions';
 import admin from '@/routes/admin';
 import { SystemRole } from '@/types/roles';
 
-type Role = {
-    id: string | number;
+interface Role {
+    id: string;
     name: string;
     description: string | null;
     permissions_count: number;
     created_at: string;
-};
+}
 
 export default function List() {
     const { formatDateTime } = useAppFormat();
     const { hasPermission } = usePermissions();
     const { delete: destroy } = useForm();
-    const tableRef = React.useRef<{ fetchData: () => void }>(null);
+    const tableRef = useRef<{ fetchData: () => void }>(null);
 
-    const [roleToDelete, setRoleToDelete] = React.useState<{
+    const [roleToDelete, setRoleToDelete] = useState<{
         id: string;
         name: string;
     } | null>(null);
@@ -45,7 +45,7 @@ export default function List() {
         });
     };
 
-    const columns = React.useMemo<ColumnDef<Role>[]>(
+    const columns = useMemo<ColumnDef<Role>[]>(
         () => [
             {
                 accessorKey: 'name',
@@ -74,7 +74,7 @@ export default function List() {
                 id: 'actions',
                 header: 'Actions',
                 enableSorting: false,
-                cell: ({ row }: any) => {
+                cell: ({ row }) => {
                     if (row.original.name === SystemRole.SUPER_ADMIN) {
                         return (
                             <span className="text-xs text-muted-foreground">

@@ -1,7 +1,7 @@
 import { Head, Link, useForm } from '@inertiajs/react';
 import type { ColumnDef } from '@tanstack/react-table';
 import { MoreHorizontal, Pen, Trash2, Eye } from 'lucide-react';
-import React from 'react';
+import { useRef, useState, useMemo } from 'react';
 import AdvancedTable from '@/components/advanced-table';
 import { ConfirmDialog } from '@/components/confirm-dialog';
 import { Badge } from '@/components/ui/badge';
@@ -21,9 +21,9 @@ export default function List() {
     const { formatDate } = useAppFormat();
     const { hasPermission } = usePermissions();
     const { delete: destroy } = useForm();
-    const tableRef = React.useRef<{ fetchData: () => void }>(null);
+    const tableRef = useRef<{ fetchData: () => void }>(null);
 
-    const [userToDelete, setUserToDelete] = React.useState<string | null>(null);
+    const [userToDelete, setUserToDelete] = useState<string | null>(null);
 
     const handleDelete = (id: string) => {
         setUserToDelete(id);
@@ -44,7 +44,7 @@ export default function List() {
         });
     };
 
-    const columns = React.useMemo<ColumnDef<User>[]>(
+    const columns = useMemo<ColumnDef<User>[]>(
         () => [
             {
                 accessorKey: 'name',

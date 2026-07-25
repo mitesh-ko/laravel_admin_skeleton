@@ -7,7 +7,6 @@ import {
     Users,
     CheckCircle2,
 } from 'lucide-react';
-import React from 'react';
 import TextLink from '@/components/text-link';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -35,7 +34,7 @@ interface ViewProps {
 export default function View({ user }: ViewProps) {
     const { formatDate } = useAppFormat();
     const userRoleNames = user.roles?.map((r) => r.name) || [];
-    const userPermissionNames = user.permissions?.map((p: any) => p.name) || [];
+    const userPermissionNames = user.permissions?.map((p) => p.name) || [];
     const userAssignedUsers = user.assigned_users || [];
 
     return (

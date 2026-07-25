@@ -1,5 +1,7 @@
 import { Head, Link, useForm } from '@inertiajs/react';
 import { ArrowLeft } from 'lucide-react';
+import type { FormEvent } from 'react';
+import type { OnChangeValue } from 'react-select';
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -15,6 +17,11 @@ interface CreateEditProps {
     users: { id: string; name: string }[];
 }
 
+interface SelectOption {
+    value: string;
+    label: string;
+}
+
 export default function CreateEdit({
     user,
     roles,
@@ -23,9 +30,8 @@ export default function CreateEdit({
 }: CreateEditProps) {
     const isEdit = !!user;
     const userRoleNames = user?.roles?.map((r) => r.name) || [];
-    const userPermissionNames =
-        user?.permissions?.map((p: any) => p.name) || [];
-    const userAssignedUsers = user?.assigned_users?.map((u: any) => u.id) || [];
+    const userPermissionNames = user?.permissions?.map((p) => p.name) || [];
+    const userAssignedUsers = user?.assigned_users?.map((u) => u.id) || [];
 
     const { data, setData, post, put, processing, errors } = useForm({
         name: user?.name || '',
@@ -35,7 +41,7 @@ export default function CreateEdit({
         assigned_users: userAssignedUsers,
     });
 
-    const submit = (e: React.FormEvent) => {
+    const submit = (e: FormEvent) => {
         e.preventDefault();
 
         if (isEdit) {
@@ -102,11 +108,13 @@ export default function CreateEdit({
                                     value: role,
                                     label: role,
                                 }))}
-                                onChange={(selected) =>
+                                onChange={(
+                                    selected: OnChangeValue<SelectOption, true>,
+                                ) =>
                                     setData(
                                         'roles',
                                         selected
-                                            ? (selected as any[]).map(
+                                            ? selected.map(
                                                   (option) => option.value,
                                               )
                                             : [],
@@ -140,11 +148,13 @@ export default function CreateEdit({
                                         users.find((u) => u.id === id)?.name ||
                                         '',
                                 }))}
-                                onChange={(selected: any) =>
+                                onChange={(
+                                    selected: OnChangeValue<SelectOption, true>,
+                                ) =>
                                     setData(
                                         'assigned_users',
                                         selected
-                                            ? (selected as any[]).map(
+                                            ? selected.map(
                                                   (option) => option.value,
                                               )
                                             : [],
@@ -156,7 +166,8 @@ export default function CreateEdit({
                             />
                             <InputError
                                 message={
-                                    (errors as any).assigned_users as string
+                                    (errors as Record<string, string>)
+                                        .assigned_users
                                 }
                             />
                         </div>
@@ -174,11 +185,13 @@ export default function CreateEdit({
                                     value: permission,
                                     label: permission,
                                 }))}
-                                onChange={(selected) =>
+                                onChange={(
+                                    selected: OnChangeValue<SelectOption, true>,
+                                ) =>
                                     setData(
                                         'permissions',
                                         selected
-                                            ? (selected as any[]).map(
+                                            ? selected.map(
                                                   (option) => option.value,
                                               )
                                             : [],

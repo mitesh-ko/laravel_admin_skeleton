@@ -4,6 +4,7 @@ import TextAlign from '@tiptap/extension-text-align';
 import { TextStyle } from '@tiptap/extension-text-style';
 import Underline from '@tiptap/extension-underline';
 import { EditorContent, useEditor } from '@tiptap/react';
+import type { Editor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import {
     ArrowLeft,
@@ -17,7 +18,8 @@ import {
     Heading2,
     Save,
 } from 'lucide-react';
-import * as React from 'react';
+import { useState } from 'react';
+import type { FormEvent } from 'react';
 
 import { toast } from 'sonner';
 import { Badge } from '@/components/ui/badge';
@@ -26,19 +28,13 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import admin from '@/routes/admin';
 
-type MailTemplate = {
-    id: string;
-    key: string;
-    subject: string;
-    html_content: string;
-    available_snippets: string[] | null;
-};
+import type { MailTemplate } from '@/types/models/mail-template';
 
-type Props = {
+interface Props {
     template: MailTemplate;
-};
+}
 
-const MenuBar = ({ editor }: { editor: any }) => {
+const MenuBar = ({ editor }: { editor: Editor }) => {
     if (!editor) {
         return null;
     }
@@ -150,7 +146,7 @@ const MenuBar = ({ editor }: { editor: any }) => {
 };
 
 export default function Edit({ template }: Props) {
-    const [previewKey, setPreviewKey] = React.useState(() => Date.now());
+    const [previewKey, setPreviewKey] = useState(() => Date.now());
     const { data, setData, put, processing, errors } = useForm({
         subject: template.subject,
         html_content: template.html_content,
@@ -179,7 +175,7 @@ export default function Edit({ template }: Props) {
         }
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = (e: FormEvent) => {
         e.preventDefault();
         put(admin.mailTemplates.update.url(template.id), {
             preserveScroll: true,
