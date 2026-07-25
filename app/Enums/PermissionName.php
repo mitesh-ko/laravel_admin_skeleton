@@ -125,4 +125,9 @@ enum PermissionName: string
      * Access and manage global system settings.
      */
     case MANAGE_GENERAL_SETTINGS = 'Manage General Settings';
+
+    /**
+     * Access and manage mail settings (SMTP credentials, etc).
+     */
+    case MANAGE_MAIL_SETTINGS = 'Manage Mail Settings';
 }

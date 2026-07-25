@@ -51,6 +51,7 @@ class RoleAndPermissionSeeder extends Seeder
             ],
             'Settings' => [
                 PermissionName::MANAGE_GENERAL_SETTINGS->value,
+                PermissionName::MANAGE_MAIL_SETTINGS->value,
             ],
         ];
 

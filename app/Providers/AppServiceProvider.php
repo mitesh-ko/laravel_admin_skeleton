@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Settings\GeneralSettings;
+use App\Settings\MailSettings;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
@@ -24,6 +26,27 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->configureDefaults();
+
+        try {
+            $settings = app(GeneralSettings::class);
+            config(['app.name' => $settings->site_name]);
+
+            $mailSettings = app(MailSettings::class);
+            if ($mailSettings->mail_mailer) {
+                config([
+                    'mail.default' => $mailSettings->mail_mailer,
+                    "mail.mailers.{$mailSettings->mail_mailer}.host" => $mailSettings->mail_host,
+                    "mail.mailers.{$mailSettings->mail_mailer}.port" => $mailSettings->mail_port,
+                    "mail.mailers.{$mailSettings->mail_mailer}.username" => $mailSettings->mail_username,
+                    "mail.mailers.{$mailSettings->mail_mailer}.password" => $mailSettings->mail_password,
+                    "mail.mailers.{$mailSettings->mail_mailer}.encryption" => $mailSettings->mail_encryption,
+                    'mail.from.address' => $mailSettings->mail_from_address,
+                    'mail.from.name' => $mailSettings->mail_from_name,
+                ]);
+            }
+        } catch (\Throwable $e) {
+            // Settings table might not be migrated yet, fallback to env.
+        }
     }
 
     /**
@@ -37,7 +60,8 @@ class AppServiceProvider extends ServiceProvider
             app()->isProduction(),
         );
 
-        Password::defaults(fn (): ?Password => app()->isProduction()
+        Password::defaults(
+            fn (): ?Password => app()->isProduction()
             ? Password::min(12)
                 ->mixedCase()
                 ->letters()

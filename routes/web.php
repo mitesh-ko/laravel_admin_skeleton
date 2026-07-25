@@ -38,5 +38,7 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
     Route::get('api/mail-templates/{mail_template}/preview', [MailTemplateController::class, 'preview'])->name('mail-templates.preview');
     Route::get('/settings/general', [SettingController::class, 'editGeneral'])->name('settings.edit-general');
     Route::put('/settings/general', [SettingController::class, 'updateGeneral'])->name('settings.update-general');
+    Route::get('/settings/mail', [SettingController::class, 'editMail'])->name('settings.edit-mail');
+    Route::put('/settings/mail', [SettingController::class, 'updateMail'])->name('settings.update-mail');
     Route::resource('mail-templates', MailTemplateController::class)->only(['index', 'edit', 'update']);
 });

@@ -27,7 +27,10 @@ import { dashboard } from '@/routes';
 import admin from '@/routes/admin';
 import type { NavItem } from '@/types';
 
-type AppNavItem = NavItem & { permission?: string };
+type AppNavItem = Omit<NavItem, 'items'> & {
+    permission?: string | string[];
+    items?: Omit<AppNavItem, 'icon' | 'items'>[];
+};
 
 const mainNavItems: AppNavItem[] = [
     {
@@ -45,15 +48,17 @@ const mainNavItems: AppNavItem[] = [
         title: 'Logs',
         href: '#',
         icon: Activity,
-        permission: 'Manage Activity Logs',
+        permission: ['Manage Activity Logs', 'Manage Authentication Logs'],
         items: [
             {
                 title: 'Activity Logs',
                 href: admin.activityLogs.index.url(),
+                permission: 'Manage Activity Logs',
             },
             {
                 title: 'Authentication Logs',
                 href: admin.authenticationLogs.index.url(),
+                permission: 'Manage Authentication Logs',
             },
         ],
     },
@@ -73,15 +78,17 @@ const mainNavItems: AppNavItem[] = [
         title: 'System Settings',
         href: '#',
         icon: Settings,
-        permission: 'Manage System Settings',
+        permission: ['Manage General Settings', 'Manage Mail Settings'],
         items: [
             {
                 title: 'General Settings',
                 href: admin.settings.editGeneral.url(),
+                permission: 'Manage General Settings',
             },
             {
                 title: 'Mail Settings',
-                href: admin.authenticationLogs.index.url(),
+                href: admin.settings.editMail.url(),
+                permission: 'Manage Mail Settings',
             },
         ],
     },
@@ -103,9 +110,35 @@ const footerNavItems: NavItem[] = [
 export function AppSidebar() {
     const { hasPermission } = usePermissions();
 
-    const filteredNavItems = mainNavItems.filter(
-        (item) => !item.permission || hasPermission(item.permission),
-    );
+    const filterItem = (item: AppNavItem): AppNavItem | null => {
+        if (item.permission) {
+            const hasAccess = Array.isArray(item.permission)
+                ? item.permission.some(hasPermission)
+                : hasPermission(item.permission);
+
+            if (!hasAccess) {
+                return null;
+            }
+        }
+
+        if (item.items) {
+            const filteredItems = item.items
+                .map(filterItem)
+                .filter(Boolean) as Omit<AppNavItem, 'icon' | 'items'>[];
+
+            if (filteredItems.length === 0) {
+                return null;
+            }
+
+            return { ...item, items: filteredItems };
+        }
+
+        return item;
+    };
+
+    const filteredNavItems = mainNavItems
+        .map(filterItem)
+        .filter(Boolean) as AppNavItem[];
 
     return (
         <Sidebar collapsible="icon" variant="inset">
