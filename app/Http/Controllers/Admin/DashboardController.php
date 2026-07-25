@@ -53,14 +53,17 @@ class DashboardController extends Controller
                 ];
             });
 
-        $utmTrafficData = UtmVisit::selectRaw('COALESCE(utm_source, "Direct/None") as source, COALESCE(utm_campaign, "Unknown") as campaign, COUNT(*) as count')
-            ->groupBy('utm_source', 'utm_campaign')
+        $utmTrafficData = UtmVisit::leftJoin('utm_sources', 'utm_visits.utm_source_id', '=', 'utm_sources.id')
+            ->selectRaw('COALESCE(utm_sources.name, "Direct/None") as source, COALESCE(utm_sources.utm_campaign, "Unknown") as campaign, COUNT(utm_visits.id) as count')
+            ->groupBy('utm_sources.name', 'utm_sources.utm_campaign')
             ->orderByDesc('count')
             ->limit(10)
             ->get();
 
-        $utmRegistrationData = User::selectRaw('COALESCE(utm_source, "Direct/None") as source, COALESCE(utm_campaign, "Unknown") as campaign, COUNT(*) as count')
-            ->groupBy('utm_source', 'utm_campaign')
+        $utmRegistrationData = User::leftJoin('utm_visits', 'users.id', '=', 'utm_visits.user_id')
+            ->leftJoin('utm_sources', 'utm_visits.utm_source_id', '=', 'utm_sources.id')
+            ->selectRaw('COALESCE(utm_sources.name, "Direct/None") as source, COALESCE(utm_sources.utm_campaign, "Unknown") as campaign, COUNT(DISTINCT users.id) as count')
+            ->groupBy('utm_sources.name', 'utm_sources.utm_campaign')
             ->orderByDesc('count')
             ->limit(10)
             ->get();
