@@ -94,7 +94,7 @@ export default function List({
                             <Button variant="outline" size="sm" asChild>
                                 <Link
                                     href={admin.activityLogs.show.url(
-                                        row.original.id,
+                                        Number(row.original.id),
                                     )}
                                 >
                                     <Eye className="mr-2 h-4 w-4" />

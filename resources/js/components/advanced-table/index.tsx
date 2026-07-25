@@ -499,6 +499,7 @@ const AdvancedTable = forwardRef(function AdvancedTable(
     );
 
     // 4. TanStack Table Instance
+    // eslint-disable-next-line react-hooks/incompatible-library -- TanStack Table v8 returns functions that cannot be memoized; known React Compiler limitation
     const table = useReactTable({
         data: tableData.dataList,
         columns: finalColumns,
