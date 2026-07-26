@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Services\NotificationService;
 use App\Settings\GeneralSettings;
 use App\Settings\MailSettings;
 use Carbon\CarbonImmutable;
@@ -17,7 +18,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->singleton(NotificationService::class);
+        $this->app->alias(NotificationService::class, 'notify');
     }
 
     /**

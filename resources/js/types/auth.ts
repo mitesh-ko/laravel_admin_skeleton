@@ -1,3 +1,5 @@
+import type { DatabaseNotification } from './index';
+
 export interface User {
     id: number;
     name: string;
@@ -15,6 +17,7 @@ export interface Auth {
     user: User;
     permissions: string[];
     isImpersonating?: boolean;
+    unreadNotifications?: DatabaseNotification[];
 }
 
 /* @chisel-passkeys */

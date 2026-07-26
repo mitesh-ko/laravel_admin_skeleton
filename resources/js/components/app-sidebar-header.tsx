@@ -5,6 +5,7 @@ import { SidebarTrigger } from '@/components/ui/sidebar';
 import admin from '@/routes/admin';
 import type { BreadcrumbItem as BreadcrumbItemType, SharedData } from '@/types';
 import AppearanceDropdown from './appearance-dropdown';
+import { NotificationDropdown } from './notification-dropdown';
 
 export function AppSidebarHeader({
     breadcrumbs = [],
@@ -32,6 +33,7 @@ export function AppSidebarHeader({
                         </Link>
                     </Button>
                 )}
+                <NotificationDropdown />
                 <AppearanceDropdown />
             </div>
         </header>
