@@ -12,9 +12,43 @@ export interface FileInputProps extends Omit<React.InputHTMLAttributes<HTMLInput
 
 export const FileInput = forwardRef<HTMLInputElement, FileInputProps>(
     ({ className, value, onFileChange, error, previewUrl, onChange, ...props }, ref) => {
-        const [dragActive, setDragActive] = useState(false);
-        const [selectedFile, setSelectedFile] = useState<File | null>(value || null);
-        const [currentPreviewUrl, setCurrentPreviewUrl] = useState<string | null>(previewUrl || null);
+        const [dragActive, setDragActive] = React.useState(false);
+        const [selectedFile, setSelectedFile] = React.useState<File | null>(value || null);
+        const [currentPreviewUrl, setCurrentPreviewUrl] = React.useState<string | null>(previewUrl || null);
+
+        React.useEffect(() => {
+            setCurrentPreviewUrl(previewUrl || null);
+        }, [previewUrl]);
+
+        const internalRef = React.useRef<HTMLInputElement>(null);
+        
+        // Merge refs so both our internal ref and the forwarded ref work
+        const setRefs = React.useCallback(
+            (node: HTMLInputElement | null) => {
+                internalRef.current = node;
+                if (typeof ref === 'function') {
+                    ref(node);
+                } else if (ref) {
+                    ref.current = node;
+                }
+            },
+            [ref]
+        );
+
+        React.useEffect(() => {
+            if (value !== undefined) {
+                setSelectedFile(value);
+                if (internalRef.current) {
+                    if (value instanceof File) {
+                        const dataTransfer = new DataTransfer();
+                        dataTransfer.items.add(value);
+                        internalRef.current.files = dataTransfer.files;
+                    } else if (value === null) {
+                        internalRef.current.value = '';
+                    }
+                }
+            }
+        }, [value]);
 
         const handleFile = (file: File | null) => {
             setSelectedFile(file);
@@ -74,7 +108,7 @@ export const FileInput = forwardRef<HTMLInputElement, FileInputProps>(
                         onDrop={handleDrop}
                     >
                         <input
-                            ref={ref}
+                            ref={setRefs}
                             type="file"
                             className="absolute inset-0 z-50 h-full w-full cursor-pointer opacity-0"
                             onChange={handleChange}
@@ -124,7 +158,7 @@ export const FileInput = forwardRef<HTMLInputElement, FileInputProps>(
                             <span className="sr-only">Remove file</span>
                         </Button>
                         <input
-                            ref={ref}
+                            ref={setRefs}
                             type="file"
                             className="hidden"
                             onChange={handleChange}
