@@ -18,6 +18,8 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
 use OwenIt\Auditing\Auditable as AuditableTrait;
 use OwenIt\Auditing\Contracts\Auditable;
 use Rappasoft\LaravelAuthenticationLog\Traits\AuthenticationLoggable;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\Permission\Traits\HasRoles;
 
 /**
@@ -35,10 +37,20 @@ use Spatie\Permission\Traits\HasRoles;
  */
 #[Fillable(['name', 'email', 'password', 'created_by', 'assigned_to'])]
 #[Hidden(['password', 'two_factor_secret', 'two_factor_recovery_codes', 'remember_token', 'impersonation_token'])]
-class User extends Authenticatable implements Auditable, PasskeyUser
+class User extends Authenticatable implements Auditable, HasMedia, PasskeyUser
 {
     /** @use HasFactory<UserFactory> */
-    use AuditableTrait, AuthenticationLoggable, HasFactory, HasRoles, HasUlids, Notifiable, PasskeyAuthenticatable, TwoFactorAuthenticatable;
+    use AuditableTrait, AuthenticationLoggable, HasFactory, HasRoles, HasUlids, InteractsWithMedia, Notifiable, PasskeyAuthenticatable, TwoFactorAuthenticatable;
+
+    protected $appends = ['avatar_url'];
+
+    /**
+     * Get the user's avatar URL.
+     */
+    public function getAvatarUrlAttribute(): ?string
+    {
+        return $this->getFirstMediaUrl('avatars') ?: null;
+    }
 
     public const GLOBAL_SEARCH = [
         [

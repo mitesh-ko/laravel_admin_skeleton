@@ -16,6 +16,7 @@ trait ProfileValidationRules
     protected function profileRules(?string $userId = null): array
     {
         return [
+            'avatar' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,svg,webp', 'max:2048'],
             'name' => $this->nameRules(),
             'email' => $this->emailRules($userId),
         ];

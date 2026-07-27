@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Services\MediaService;
 use App\Services\NotificationService;
 use App\Settings\GeneralSettings;
 use App\Settings\MailSettings;
@@ -20,6 +21,9 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->singleton(NotificationService::class);
         $this->app->alias(NotificationService::class, 'notify');
+
+        $this->app->singleton(MediaService::class);
+        $this->app->alias(MediaService::class, 'media_manager');
     }
 
     /**

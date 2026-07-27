@@ -5,6 +5,7 @@ import DeleteUser from '@/components/delete-user';
 import Heading from '@/components/heading';
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
+import { FileInput } from '@/components/ui/file-input';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
@@ -15,7 +16,7 @@ import { send } from '@/routes/verification';
 import type { Auth } from '@/types';
 
 type PageProps = {
-    auth: Auth;
+    auth: Auth & { user: { avatar_url?: string | null } };
 };
 
 export default function Profile({
@@ -49,8 +50,29 @@ export default function Profile({
                     }}
                     className="space-y-6"
                 >
-                    {({ processing, errors }) => (
+                    {({ processing, errors, setData }) => (
                         <>
+                            <div className="grid gap-2">
+                                <Label htmlFor="avatar">Avatar</Label>
+                                <FileInput
+                                    id="avatar"
+                                    name="avatar"
+                                    accept="image/*"
+                                    previewUrl={auth.user.avatar_url}
+                                    onChange={(e) => {
+                                        const file = e.target.files?.[0];
+
+                                        if (file) {
+                                            setData('avatar', file);
+                                        }
+                                    }}
+                                />
+                                <InputError
+                                    className="mt-2"
+                                    message={errors.avatar as string}
+                                />
+                            </div>
+
                             <div className="grid gap-2">
                                 <Label htmlFor="name">Name</Label>
 
