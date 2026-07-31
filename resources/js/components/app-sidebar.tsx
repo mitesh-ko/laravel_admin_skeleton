@@ -10,6 +10,7 @@ import {
     Users,
     Megaphone,
     DownloadCloud,
+    HeartPulse,
 } from 'lucide-react';
 import AppLogo from '@/components/app-logo';
 import { NavFooter } from '@/components/nav-footer';
@@ -104,6 +105,12 @@ const mainNavItems: AppNavItem[] = [
                 permission: 'Manage Mail Settings',
             },
         ],
+    },
+    {
+        title: 'System Health',
+        href: admin.systemHealth.index.url(),
+        icon: HeartPulse,
+        permission: 'Manage System Health',
     },
 ];
 

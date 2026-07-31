@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\MailTemplateController;
 use App\Http\Controllers\Admin\NotificationController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\SettingController;
+use App\Http\Controllers\Admin\SystemHealthController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\UtmSourceController;
 use Illuminate\Support\Facades\Route;
@@ -59,4 +60,8 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
     Route::get('api/file-exports/search', [FileExportController::class, 'search'])->name('file-exports.search');
     Route::get('file-exports', [FileExportController::class, 'index'])->name('file-exports.index');
     Route::get('file-exports/{fileExport}/download', [FileExportController::class, 'download'])->name('file-exports.download');
+
+    Route::get('system-health', [SystemHealthController::class, 'index'])->name('system-health.index');
+    Route::get('api/system-health/logs', [SystemHealthController::class, 'logs'])->name('system-health.logs');
+    Route::post('system-health/clear-cache', [SystemHealthController::class, 'clearCache'])->name('system-health.clear-cache');
 });

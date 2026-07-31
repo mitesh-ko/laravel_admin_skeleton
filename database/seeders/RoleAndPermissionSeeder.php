@@ -59,6 +59,9 @@ class RoleAndPermissionSeeder extends Seeder
                 PermissionName::EDIT_UTM_SOURCES->value,
                 PermissionName::DELETE_UTM_SOURCES->value,
             ],
+            'System' => [
+                PermissionName::MANAGE_SYSTEM_HEALTH->value,
+            ],
         ];
 
         foreach ($modules as $module => $permissions) {

@@ -138,4 +138,10 @@ enum PermissionName: string
     case CREATE_UTM_SOURCES = 'Create UTM Sources';
     case EDIT_UTM_SOURCES = 'Edit UTM Sources';
     case DELETE_UTM_SOURCES = 'Delete UTM Sources';
+
+    // ---------------------------------------------------------
+    // System Health
+    // ---------------------------------------------------------
+
+    case MANAGE_SYSTEM_HEALTH = 'Manage System Health';
 }
