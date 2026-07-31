@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\ActivityLogController;
 use App\Http\Controllers\Admin\AuthenticationLogController;
+use App\Http\Controllers\Admin\FileExportController;
 use App\Http\Controllers\Admin\ImpersonationController;
 use App\Http\Controllers\Admin\MailTemplateController;
 use App\Http\Controllers\Admin\NotificationController;
@@ -23,6 +24,7 @@ require __DIR__.'/settings.php';
 
 Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('api/users/search', [UserController::class, 'search'])->name('users.search');
+    Route::post('users/export', [UserController::class, 'export'])->name('users.export');
     Route::resource('users', UserController::class);
 
     Route::get('impersonate/{user}', [ImpersonationController::class, 'create'])->name('impersonate');
@@ -53,4 +55,8 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
     Route::post('notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.mark-as-read');
     Route::post('notifications/read-all', [NotificationController::class, 'markAllAsRead'])->name('notifications.mark-all-as-read');
     Route::delete('notifications/{id}', [NotificationController::class, 'destroy'])->name('notifications.destroy');
+
+    Route::get('api/file-exports/search', [FileExportController::class, 'search'])->name('file-exports.search');
+    Route::get('file-exports', [FileExportController::class, 'index'])->name('file-exports.index');
+    Route::get('file-exports/{fileExport}/download', [FileExportController::class, 'download'])->name('file-exports.download');
 });

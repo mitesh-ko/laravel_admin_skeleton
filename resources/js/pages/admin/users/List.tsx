@@ -1,4 +1,4 @@
-import { Head, Link, useForm } from '@inertiajs/react';
+import { Head, Link, useForm, router } from '@inertiajs/react';
 import type { ColumnDef } from '@tanstack/react-table';
 import { MoreHorizontal, Pen, Trash2, Eye } from 'lucide-react';
 import { useRef, useState, useMemo } from 'react';
@@ -24,7 +24,19 @@ export default function List() {
     const tableRef = useRef<{ fetchData: () => void }>(null);
 
     const [userToDelete, setUserToDelete] = useState<string | null>(null);
+    const [isExporting, setIsExporting] = useState(false);
 
+    const handleExport = () => {
+        setIsExporting(true);
+        router.post(
+            admin.users.export.url(),
+            {},
+            {
+                preserveScroll: true,
+                onFinish: () => setIsExporting(false),
+            },
+        );
+    };
     const handleDelete = (id: string) => {
         setUserToDelete(id);
     };
@@ -164,13 +176,24 @@ export default function List() {
             <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
                 <div className="mb-4 flex items-center justify-between">
                     <h2 className="text-2xl font-bold tracking-tight">Users</h2>
-                    {hasPermission('Create Users') && (
-                        <Button asChild>
-                            <Link href={admin.users.create.url()}>
-                                Create User
-                            </Link>
-                        </Button>
-                    )}
+                    <div className="flex gap-2">
+                        {hasPermission('Manage Users') && (
+                            <Button
+                                variant="outline"
+                                onClick={handleExport}
+                                disabled={isExporting}
+                            >
+                                {isExporting ? 'Exporting...' : 'Export'}
+                            </Button>
+                        )}
+                        {hasPermission('Create Users') && (
+                            <Button asChild>
+                                <Link href={admin.users.create.url()}>
+                                    Create User
+                                </Link>
+                            </Button>
+                        )}
+                    </div>
                 </div>
 
                 <div className="mt-4">

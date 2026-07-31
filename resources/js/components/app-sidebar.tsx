@@ -9,6 +9,7 @@ import {
     ShieldHalf,
     Users,
     Megaphone,
+    DownloadCloud,
 } from 'lucide-react';
 import AppLogo from '@/components/app-logo';
 import { NavFooter } from '@/components/nav-footer';
@@ -74,6 +75,11 @@ const mainNavItems: AppNavItem[] = [
         href: admin.utmSources.index.url(),
         icon: Megaphone,
         permission: 'Manage UTM Sources',
+    },
+    {
+        title: 'File Exports',
+        href: admin.fileExports.index.url(),
+        icon: DownloadCloud,
     },
     {
         title: 'Mail Templates',

@@ -7,11 +7,14 @@ namespace App\Http\Controllers\Admin;
 use App\Actions\User\CreateUserAction;
 use App\Actions\User\DeleteUserAction;
 use App\Actions\User\UpdateUserAction;
+use App\DTOs\FileExportDTO;
 use App\DTOs\GlobalSearchDTO;
 use App\Enums\PermissionName;
 use App\Enums\SystemRole;
+use App\Facades\FileExportManager;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\UserStoreUpdateRequest;
+use App\Jobs\ExportUsersJob;
 use App\Models\Permission;
 use App\Models\User;
 use App\Utils\TableUtility;
@@ -33,6 +36,27 @@ class UserController extends Controller
         Gate::authorize(PermissionName::MANAGE_USERS->value);
 
         return Inertia::render('admin/users/List');
+    }
+
+    /**
+     * Export users data to CSV in background.
+     */
+    public function export(Request $request): RedirectResponse
+    {
+        Gate::authorize(PermissionName::MANAGE_USERS->value);
+
+        $fileExport = FileExportManager::initiate(
+            new FileExportDTO(
+                userId: $request->user()->id,
+                name: 'Users Export'
+            )
+        );
+
+        ExportUsersJob::dispatch($fileExport->id);
+
+        Inertia::flash('toast', ['type' => 'success', 'message' => 'Export started. You will be notified when it is ready.']);
+
+        return back();
     }
 
     /**
