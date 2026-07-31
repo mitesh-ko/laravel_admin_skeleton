@@ -3,11 +3,12 @@
 namespace App\Notifications\Auth;
 
 use App\Services\MailTemplateRendererService;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Support\HtmlString;
 use Rappasoft\LaravelAuthenticationLog\Notifications\NewDevice as BaseNewDevice;
 
-class NewDevice extends BaseNewDevice
+class NewDevice extends BaseNewDevice implements ShouldQueue
 {
     public function toMail($notifiable)
     {

@@ -5,6 +5,7 @@ namespace App\Mail;
 use App\Models\User;
 use App\Services\MailTemplateRendererService;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Mail\Mailables\Content;
@@ -12,7 +13,7 @@ use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\HtmlString;
 
-class UserCreatedMail extends Mailable
+class UserCreatedMail extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 

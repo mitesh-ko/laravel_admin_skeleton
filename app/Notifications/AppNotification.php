@@ -6,10 +6,11 @@ namespace App\Notifications;
 
 use App\DTOs\NotificationData;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Str;
 
-class AppNotification extends Notification
+class AppNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 

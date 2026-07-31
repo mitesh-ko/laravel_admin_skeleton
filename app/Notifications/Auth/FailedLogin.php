@@ -3,11 +3,12 @@
 namespace App\Notifications\Auth;
 
 use App\Services\MailTemplateRendererService;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Support\HtmlString;
 use Rappasoft\LaravelAuthenticationLog\Notifications\FailedLogin as BaseFailedLogin;
 
-class FailedLogin extends BaseFailedLogin
+class FailedLogin extends BaseFailedLogin implements ShouldQueue
 {
     public function toMail($notifiable)
     {

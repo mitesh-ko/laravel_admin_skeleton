@@ -2,10 +2,11 @@
 
 namespace App\Notifications\Auth;
 
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Rappasoft\LaravelAuthenticationLog\Notifications\SuspiciousActivity as BaseSuspiciousActivity;
 
-class SuspiciousActivity extends BaseSuspiciousActivity
+class SuspiciousActivity extends BaseSuspiciousActivity implements ShouldQueue
 {
     public function toMail($notifiable)
     {
