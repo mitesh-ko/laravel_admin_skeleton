@@ -43,7 +43,7 @@ class UserController extends Controller
      */
     public function export(Request $request): RedirectResponse
     {
-        Gate::authorize(PermissionName::MANAGE_USERS->value);
+        Gate::authorize(PermissionName::EXPORT_USERS->value);
 
         $fileExport = FileExportManager::initiate(
             new FileExportDTO(

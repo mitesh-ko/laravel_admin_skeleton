@@ -32,6 +32,7 @@ class RoleAndPermissionSeeder extends Seeder
                 PermissionName::DELETE_USERS->value,
                 PermissionName::CHANGE_STATUS_USERS->value,
                 PermissionName::RESET_PASSWORD_USERS->value,
+                PermissionName::EXPORT_USERS->value,
             ],
             'Roles' => [
                 PermissionName::MANAGE_ROLES->value,

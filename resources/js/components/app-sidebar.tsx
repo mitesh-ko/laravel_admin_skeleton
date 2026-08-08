@@ -81,6 +81,7 @@ const mainNavItems: AppNavItem[] = [
         title: 'File Exports',
         href: admin.fileExports.index.url(),
         icon: DownloadCloud,
+        permission: 'Export Users',
     },
     {
         title: 'Mail Templates',

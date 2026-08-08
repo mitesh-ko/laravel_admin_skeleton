@@ -5,11 +5,13 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Admin;
 
 use App\DTOs\GlobalSearchDTO;
+use App\Enums\PermissionName;
 use App\Http\Controllers\Controller;
 use App\Models\FileExport;
 use App\Utils\TableUtility;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
@@ -17,11 +19,14 @@ class FileExportController extends Controller
 {
     public function index(Request $request)
     {
+        Gate::authorize(PermissionName::EXPORT_USERS->value);
+
         return Inertia::render('admin/file-exports/Index');
     }
 
     public function search(Request $request): JsonResponse
     {
+        Gate::authorize(PermissionName::EXPORT_USERS->value);
         $exportsQuery = FileExport::where('user_id', $request->user()->id)
             ->select(['id', 'name', 'status', 'details', 'error_message', 'created_at', 'completed_at']);
 

@@ -55,6 +55,11 @@ enum PermissionName: string
      */
     case RESET_PASSWORD_USERS = 'Reset Password Users';
 
+    /**
+     * Export users.
+     */
+    case EXPORT_USERS = 'Export Users';
+
     // ---------------------------------------------------------
     // Roles
     // ---------------------------------------------------------

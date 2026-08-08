@@ -177,7 +177,7 @@ export default function List() {
                 <div className="mb-4 flex items-center justify-between">
                     <h2 className="text-2xl font-bold tracking-tight">Users</h2>
                     <div className="flex gap-2">
-                        {hasPermission('Manage Users') && (
+                        {hasPermission('Export Users') && (
                             <Button
                                 variant="outline"
                                 onClick={handleExport}
