@@ -19,7 +19,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
-import { dashboard } from '@/routes';
+import { dashboard } from '@/routes/admin';
 import admin from '@/routes/admin';
 
 interface MailSettingsProps {

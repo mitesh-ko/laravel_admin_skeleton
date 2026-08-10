@@ -26,7 +26,7 @@ import {
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { usePermissions } from '@/hooks/use-permissions';
-import { dashboard } from '@/routes';
+import { dashboard } from '@/routes/admin';
 import admin from '@/routes/admin';
 import type { NavItem } from '@/types';
 

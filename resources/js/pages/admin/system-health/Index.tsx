@@ -22,7 +22,7 @@ import admin from '@/routes/admin';
 import type { BreadcrumbItem } from '@/types';
 
 const breadcrumbs: BreadcrumbItem[] = [
-    { title: 'Dashboard', href: '/dashboard' },
+    { title: 'Dashboard', href: admin.dashboard().url },
     { title: 'System Health', href: admin.systemHealth.index.url() },
 ];
 

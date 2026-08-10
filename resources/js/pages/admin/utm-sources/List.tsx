@@ -6,7 +6,7 @@ import AdvancedTable from '@/components/advanced-table';
 import { ConfirmDialog } from '@/components/confirm-dialog';
 import { Button } from '@/components/ui/button';
 import { usePermissions } from '@/hooks/use-permissions';
-import { dashboard } from '@/routes';
+import { dashboard } from '@/routes/admin';
 import admin from '@/routes/admin';
 import type { UtmSource } from '@/types/models/utm-source';
 

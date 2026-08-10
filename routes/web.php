@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\ActivityLogController;
 use App\Http\Controllers\Admin\AuthenticationLogController;
+use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\FileExportController;
 use App\Http\Controllers\Admin\ImpersonationController;
 use App\Http\Controllers\Admin\MailTemplateController;
@@ -15,15 +16,12 @@ use Illuminate\Support\Facades\Route;
 
 Route::inertia('/', 'welcome')->name('home');
 
-use App\Http\Controllers\Admin\DashboardController;
-
-Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
-});
-
 require __DIR__.'/settings.php';
 
 Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/', fn () => to_route('admin.dashboard'));
+    Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
     Route::get('api/users/search', [UserController::class, 'search'])->name('users.search');
     Route::post('users/export', [UserController::class, 'export'])->name('users.export');
     Route::resource('users', UserController::class);

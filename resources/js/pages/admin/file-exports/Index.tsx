@@ -20,7 +20,7 @@ interface FileExport {
 }
 
 const breadcrumbs: BreadcrumbItem[] = [
-    { title: 'Dashboard', href: '/dashboard' },
+    { title: 'Dashboard', href: admin.dashboard().url },
     { title: 'File Exports', href: admin.fileExports.index.url() },
 ];
 

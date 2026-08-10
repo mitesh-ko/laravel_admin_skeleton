@@ -16,7 +16,7 @@ import {
     CardTitle,
     CardDescription,
 } from '@/components/ui/card';
-import { dashboard } from '@/routes';
+import { dashboard } from '@/routes/admin';
 import type {
     ActivityLog,
     LoginChartData,
