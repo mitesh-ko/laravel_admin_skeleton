@@ -15,8 +15,6 @@ class AppNotification extends Notification implements ShouldQueue
     use Queueable;
 
     /** Override default UUID with ULID for consistency with the rest of the app. */
-    public string $id;
-
     public function __construct(
         private readonly NotificationData $data,
     ) {

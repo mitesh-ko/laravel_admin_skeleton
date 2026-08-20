@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\DTOs\FileExportDTO;
+use App\DTOs\NotificationData;
 use App\Models\FileExport;
+use App\Notifications\AppNotification;
 
 class FileExportService
 {
@@ -44,6 +46,17 @@ class FileExportService
             'file_path' => $filePath,
             'completed_at' => now(),
         ]);
+
+        $export->user?->notify(
+            new AppNotification(
+                NotificationData::make(
+                    title: 'Export Completed',
+                    message: "Your export '{$export->name}' is ready to download.",
+                    actionLabel: 'Download',
+                    actionUrl: route('admin.file-exports.download', $export->id),
+                )
+            )
+        );
     }
 
     /**
