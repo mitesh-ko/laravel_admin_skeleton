@@ -21,6 +21,7 @@ class UserSeeder extends Seeder
                 ['email' => "user{$i}@throtik.com"],
                 [
                     'name' => "User {$i}",
+                    'username' => "user{$i}",
                     'password' => Hash::make($password),
                 ]
             );
@@ -30,6 +31,7 @@ class UserSeeder extends Seeder
             ['email' => 'admin@throtik.com'],
             [
                 'name' => 'Super Admin',
+                'username' => 'admin',
                 'password' => Hash::make($password),
             ]
         );
