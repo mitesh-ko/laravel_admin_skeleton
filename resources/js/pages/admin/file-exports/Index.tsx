@@ -152,6 +152,11 @@ export default function FileExportsIndex() {
                         </h2>
                         <p className="text-muted-foreground">
                             View and download your requested file exports.
+                            <span className="block text-xs text-orange-500">
+                                Note: The system automatically cleans export
+                                data daily. Yesterday's generated files are not
+                                kept to conserve storage.
+                            </span>
                         </p>
                     </div>
                 </div>
