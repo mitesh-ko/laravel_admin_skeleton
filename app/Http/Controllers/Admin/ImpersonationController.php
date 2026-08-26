@@ -51,7 +51,7 @@ class ImpersonationController extends Controller
         // Login as the target user
         Auth::login($user);
 
-        return redirect()->route('dashboard');
+        return redirect()->route('admin.dashboard');
     }
 
     /**

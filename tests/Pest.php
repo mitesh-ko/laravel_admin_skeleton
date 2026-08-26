@@ -1,7 +1,37 @@
 <?php
 
+use Dotenv\Dotenv;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
+
+// Manually load .env.testing before Laravel boots
+$envPath = __DIR__.'/../.env.testing';
+
+if (! file_exists($envPath)) {
+    echo "\n\033[31m[CRITICAL DANGER]\033[0m .env.testing file is missing!\n";
+    echo "Running tests without it will fall back to your local .env and WIPE YOUR REAL DATABASE.\n";
+    echo "Please copy .env to .env.testing and set DB_DATABASE=your_test_db before running tests.\n\n";
+    exit(1);
+}
+
+$dotenv = Dotenv::createMutable(dirname($envPath), basename($envPath));
+$dotenv->safeLoad();
+
+// Automatically create the test database for MySQL connections
+if (($_ENV['DB_CONNECTION'] ?? env('DB_CONNECTION')) === 'mysql') {
+    $dbHost = $_ENV['DB_HOST'] ?? env('DB_HOST', '127.0.0.1');
+    $dbPort = $_ENV['DB_PORT'] ?? env('DB_PORT', '3306');
+    $dbUser = $_ENV['DB_USERNAME'] ?? env('DB_USERNAME', '');
+    $dbPass = $_ENV['DB_PASSWORD'] ?? env('DB_PASSWORD', '');
+    $dbName = $_ENV['DB_DATABASE'] ?? env('DB_DATABASE', '');
+
+    try {
+        $pdo = new PDO("mysql:host={$dbHost};port={$dbPort}", $dbUser, $dbPass);
+        $pdo->exec("CREATE DATABASE IF NOT EXISTS `{$dbName}`");
+    } catch (PDOException $e) {
+        // Let Laravel handle connection errors later during execution
+    }
+}
 
 /*
 |--------------------------------------------------------------------------
@@ -15,7 +45,7 @@ use Tests\TestCase;
 */
 
 pest()->extend(TestCase::class)
- // ->use(RefreshDatabase::class)
+    ->use(RefreshDatabase::class)
     ->in('Feature');
 
 /*
