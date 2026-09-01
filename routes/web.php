@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\SystemHealthController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\UtmSourceController;
+use App\Http\Controllers\Api\FcmTokenController;
 use Illuminate\Support\Facades\Route;
 
 Route::inertia('/', 'welcome')->name('home');
@@ -21,6 +22,8 @@ require __DIR__.'/settings.php';
 Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/', fn () => to_route('admin.dashboard'));
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+    Route::post('fcm-token', [FcmTokenController::class, 'store'])->name('fcm-token.store');
 
     Route::get('api/users/search', [UserController::class, 'search'])->name('users.search');
     Route::post('users/export', [UserController::class, 'export'])->name('users.export');

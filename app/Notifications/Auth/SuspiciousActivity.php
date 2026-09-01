@@ -4,10 +4,18 @@ namespace App\Notifications\Auth;
 
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
+use NotificationChannels\Fcm\FcmChannel;
+use NotificationChannels\Fcm\FcmMessage;
+use NotificationChannels\Fcm\Resources\Notification;
 use Rappasoft\LaravelAuthenticationLog\Notifications\SuspiciousActivity as BaseSuspiciousActivity;
 
 class SuspiciousActivity extends BaseSuspiciousActivity implements ShouldQueue
 {
+    public function via($notifiable)
+    {
+        return ['mail', FcmChannel::class];
+    }
+
     public function toMail($notifiable)
     {
         return (new MailMessage)
@@ -20,5 +28,13 @@ class SuspiciousActivity extends BaseSuspiciousActivity implements ShouldQueue
                 'location' => $this->authenticationLog->location,
                 'suspiciousActivities' => $this->suspiciousActivities,
             ]);
+    }
+
+    public function toFcm($notifiable): FcmMessage
+    {
+        return FcmMessage::create()
+            ->notification(Notification::create()
+                ->title('Suspicious Activity Detected')
+                ->body('We detected suspicious activity on your account.'));
     }
 }

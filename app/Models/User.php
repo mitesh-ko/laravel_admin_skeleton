@@ -143,4 +143,22 @@ class User extends Authenticatable implements Auditable, HasMedia, PasskeyUser
     {
         return $this->hasMany(UtmVisit::class);
     }
+
+    /**
+     * Get the user's FCM tokens.
+     */
+    public function fcmTokens()
+    {
+        return $this->hasMany(FcmToken::class);
+    }
+
+    /**
+     * Route notifications for the FCM channel.
+     *
+     * @return array|string
+     */
+    public function routeNotificationForFcm()
+    {
+        return $this->fcmTokens()->pluck('token')->toArray();
+    }
 }

@@ -6,10 +6,18 @@ use App\Services\MailTemplateRendererService;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Support\HtmlString;
+use NotificationChannels\Fcm\FcmChannel;
+use NotificationChannels\Fcm\FcmMessage;
+use NotificationChannels\Fcm\Resources\Notification;
 use Rappasoft\LaravelAuthenticationLog\Notifications\NewDevice as BaseNewDevice;
 
 class NewDevice extends BaseNewDevice implements ShouldQueue
 {
+    public function via($notifiable)
+    {
+        return ['mail', FcmChannel::class];
+    }
+
     public function toMail($notifiable)
     {
         $renderer = app(MailTemplateRendererService::class);
@@ -29,5 +37,13 @@ class NewDevice extends BaseNewDevice implements ShouldQueue
         return (new MailMessage)
             ->subject($subject)
             ->markdown('emails.generic', ['html' => new HtmlString($html)]);
+    }
+
+    public function toFcm($notifiable): FcmMessage
+    {
+        return FcmMessage::create()
+            ->notification(Notification::create()
+                ->title('New Device Login')
+                ->body('Your account was logged into from a new device.'));
     }
 }
