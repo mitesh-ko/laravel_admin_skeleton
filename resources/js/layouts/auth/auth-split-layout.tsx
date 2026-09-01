@@ -1,5 +1,6 @@
 import { Link, usePage } from '@inertiajs/react';
 import AppLogoIcon from '@/components/app-logo-icon';
+import AppearanceDropdown from '@/components/appearance-dropdown';
 import { home } from '@/routes';
 import type { AuthLayoutProps } from '@/types';
 
@@ -22,7 +23,10 @@ export default function AuthSplitLayout({
                     {name}
                 </Link>
             </div>
-            <div className="w-full lg:p-8">
+            <div className="relative w-full lg:p-8">
+                <div className="absolute top-4 right-4 z-50 md:top-8 md:right-8">
+                    <AppearanceDropdown />
+                </div>
                 <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
                     <Link
                         href={home()}

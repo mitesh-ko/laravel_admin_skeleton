@@ -1,6 +1,7 @@
 import { Head, Link, usePage } from '@inertiajs/react';
 import { ShieldCheck, Activity, Users, Settings, Zap, Key } from 'lucide-react';
 import AppLogoIcon from '@/components/app-logo-icon';
+import AppearanceDropdown from '@/components/appearance-dropdown';
 import { Button } from '@/components/ui/button';
 import { login, register } from '@/routes';
 import { dashboard } from '@/routes/admin';
@@ -62,6 +63,7 @@ export default function Welcome() {
                     </div>
 
                     <nav className="flex items-center gap-4">
+                        <AppearanceDropdown />
                         {auth.user ? (
                             <Link href={dashboard().url}>
                                 <Button variant="default">Dashboard</Button>
